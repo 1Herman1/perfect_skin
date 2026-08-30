@@ -1,8 +1,8 @@
-// Prisma-клиент Perfect Skin. По ADR у проекта СВОЙ клиент в .prisma/ps-client —
-// импорт стандартного @prisma/client тянул бы клиента Симбы с чужой схемой.
-export * from '../../../../node_modules/.prisma/ps-client/index.js'
-export { PrismaClient, $Enums } from '../../../../node_modules/.prisma/ps-client/index.js'
+// Prisma-клиент проекта. Отдельный клиент .prisma/ps-client был нужен, только
+// пока проект жил внутри монорепозитория Симбы и делил с ней node_modules.
+export * from '@prisma/client'
+export { PrismaClient, $Enums } from '@prisma/client'
 
-import { PrismaClient } from '../../../../node_modules/.prisma/ps-client/index.js'
+import { PrismaClient } from '@prisma/client'
 
 export const db = new PrismaClient()
