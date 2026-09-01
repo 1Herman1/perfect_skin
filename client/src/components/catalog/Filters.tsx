@@ -180,7 +180,7 @@ export function Filters({
                 value={minPrice}
                 onChange={e => setMinPrice(e.target.value)}
                 onBlur={handlePriceChange}
-                className="flex-1 px-3 py-0.5 border border-border rounded text-sm min-h-10"
+                className="flex-1 px-3 py-0.5 border border-border-strong rounded text-sm min-h-10"
               />
               <input
                 type="number"
@@ -188,7 +188,7 @@ export function Filters({
                 value={maxPrice}
                 onChange={e => setMaxPrice(e.target.value)}
                 onBlur={handlePriceChange}
-                className="flex-1 px-3 py-0.5 border border-border rounded text-sm min-h-10"
+                className="flex-1 px-3 py-0.5 border border-border-strong rounded text-sm min-h-10"
               />
             </div>
             <div className="text-xs text-muted-foreground">
@@ -218,7 +218,7 @@ export function Filters({
               offset: 0,
             })
           }}
-          className="w-full py-0.5 text-sm text-accent-ink hover:text-accent-ink/80 transition-colors font-semibold"
+          className="w-full py-0.5 text-sm text-primary hover:text-primary/80 transition-colors font-semibold"
         >
           Очистить фильтры ({activeFilterCount})
         </button>
@@ -231,7 +231,7 @@ export function Filters({
       <>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-1 py-3 bg-white border border-border rounded-lg font-semibold text-foreground min-h-11 mb-4"
+          className="w-full flex items-center gap-2 px-4 py-3 bg-card border border-border-strong rounded-block font-semibold text-foreground min-h-11 mb-4"
         >
           <span>Фильтры</span>
           {activeFilterCount > 0 && (
@@ -242,15 +242,15 @@ export function Filters({
         </button>
 
         {isOpen && (
-          <div className="fixed inset-0 bg-black/20 z-40 lg:hidden" onClick={() => setIsOpen(false)}>
+          <div className="fixed inset-0 bg-foreground/40 z-40 lg:hidden" onClick={() => setIsOpen(false)}>
             <div
-              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[80vh] overflow-y-auto z-50"
+              className="fixed bottom-0 left-0 right-0 bg-card rounded-block max-h-[80vh] overflow-y-auto z-50"
               onClick={e => e.stopPropagation()}
               role="dialog"
               aria-modal="true"
               aria-label="Фильтры каталога"
             >
-              <div className="sticky top-0 flex items-center justify-between px-1 py-1 border-b border-border bg-white">
+              <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-border bg-card">
                 <h2 className="font-heading font-bold text-foreground">Фильтры</h2>
                 <button
                   onClick={() => setIsOpen(false)}

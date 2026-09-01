@@ -1,17 +1,16 @@
 import { Link } from 'react-router-dom'
 
 const catalogLinks = [
-  { label: 'Кремы для лица и шеи', href: '/catalog' },
-  { label: 'Сыворотки', href: '/catalog' },
-  { label: 'Маски и пилинги', href: '/catalog' },
-  { label: 'Очищение', href: '/catalog' },
-  { label: 'Уход за телом', href: '/catalog' },
-  { label: 'Парафармацевтика', href: '/catalog' },
-  { label: 'Подарочные наборы', href: '/catalog' },
-  { label: 'Линейка ISSEIMI Base', href: '/catalog' },
-  { label: 'Линейка ISSEIMI MD', href: '/catalog' },
-  { label: 'Линейка ISSEIMI Nat', href: '/catalog' },
-  { label: 'Линейка GLACÉE Skincare', href: '/catalog' },
+  { label: 'Кремы для лица и шеи', href: '/catalog/kremy-dlya-litsa-i-shei' },
+  { label: 'Сыворотки', href: '/catalog/syvorotki' },
+  { label: 'Маски и пилинги', href: '/catalog/maski' },
+  { label: 'Очищение', href: '/catalog/ochishchenie' },
+  { label: 'Уход за телом', href: '/catalog/uhod-za-telom' },
+  { label: 'Подарочные наборы', href: '/catalog/nabory' },
+  { label: 'Линейка ISSEIMI Base', href: '/catalog/all?brand=isseimi&line=isseimi-base' },
+  { label: 'Линейка ISSEIMI MD', href: '/catalog/all?brand=isseimi&line=isseimi-md' },
+  { label: 'Линейка ISSEIMI Nat Collection', href: '/catalog/all?brand=isseimi&line=isseimi-nat-collection' },
+  { label: 'Линейка GLACÉE Skincare', href: '/catalog/all?brand=glacee-skincare' },
 ]
 
 export function Footer() {
@@ -21,7 +20,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
           {/* Column 1: About */}
           <div>
-            <h3 className="text-h3 font-heading font-bold mb-6">О компании</h3>
+            <h3 className="text-lg font-heading font-bold mb-6">О компании</h3>
             <ul className="space-y-2 mb-6">
               <li>
                 <Link
@@ -58,7 +57,7 @@ export function Footer() {
 
           {/* Column 2: Catalog */}
           <div>
-            <h3 className="text-h3 font-heading font-bold mb-6">Каталог</h3>
+            <h3 className="text-lg font-heading font-bold mb-6">Каталог</h3>
             <ul className="space-y-2">
               {catalogLinks.map((link) => (
                 <li key={link.label}>
@@ -75,7 +74,7 @@ export function Footer() {
 
           {/* Column 3: Contacts */}
           <div>
-            <h3 className="text-h3 font-heading font-bold mb-6">Контакты</h3>
+            <h3 className="text-lg font-heading font-bold mb-6">Контакты</h3>
             <ul className="space-y-2 mb-6">
               <li>
                 <Link

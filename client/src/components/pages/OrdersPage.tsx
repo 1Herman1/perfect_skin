@@ -115,7 +115,7 @@ export function OrdersPage() {
 
   return (
     <div className="container-app py-12 md:py-16">
-      <h1 className="text-2xl font-heading font-bold text-foreground mb-8 uppercase tracking-tight">
+      <h1 className="text-h3 md:text-h2 font-heading font-bold text-foreground mb-8 uppercase tracking-tight">
         Мои заказы
       </h1>
 

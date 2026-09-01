@@ -216,7 +216,7 @@ export function AuthPage() {
                         if (error) setError('')
                       }}
                       placeholder="name@example.ru"
-                      className="w-full px-4 py-3 text-base rounded-pill border bg-background text-foreground placeholder-muted-foreground focus:outline-none transition-[border-color,box-shadow] duration-150 border-border focus:border-primary focus:ring-2 focus:ring-primary/25 aria-[invalid=true]:border-destructive aria-[invalid=true]:focus:ring-destructive/20 min-h-11"
+                      className="w-full px-4 py-3 text-base rounded-pill border bg-background text-foreground placeholder-muted-foreground focus:outline-none transition-[border-color,box-shadow] duration-150 border-border-strong focus:border-primary focus:ring-2 focus:ring-primary/25 aria-[invalid=true]:border-destructive aria-[invalid=true]:focus:ring-destructive/20 min-h-11"
                     />
                     <p
                       id={
@@ -321,7 +321,7 @@ export function AuthPage() {
                         )
                         if (error) setError('')
                       }}
-                      className="w-full px-4 py-4 rounded-pill border text-center text-2xl font-bold tracking-[0.4em] text-foreground placeholder-muted-foreground focus:outline-none transition-[border-color,box-shadow] duration-150 border-border focus:border-primary focus:ring-2 focus:ring-primary/25 aria-[invalid=true]:border-destructive aria-[invalid=true]:focus:ring-destructive/20 min-h-11"
+                      className="w-full px-4 py-4 rounded-pill border text-center text-2xl font-bold tracking-[0.4em] text-foreground placeholder-muted-foreground focus:outline-none transition-[border-color,box-shadow] duration-150 border-border-strong focus:border-primary focus:ring-2 focus:ring-primary/25 aria-[invalid=true]:border-destructive aria-[invalid=true]:focus:ring-destructive/20 min-h-11"
                     />
                     <p
                       id={

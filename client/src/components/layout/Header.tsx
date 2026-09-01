@@ -1,5 +1,5 @@
 import { IconMenu, IconUser, IconSearch } from '@/components/icons'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useDrawer } from '@/context/DrawerContext'
 import { useCart } from '@/context/CartContext'
@@ -28,6 +28,7 @@ export function Header({
   onSearchOpen,
 }: HeaderProps) {
   const isDesktop = useMediaQuery('(min-width: 768px)')
+  const location = useLocation()
   const { openCart, openFavorites } = useDrawer()
   const { count } = useCart()
   const { count: favCount } = useFavorites()
@@ -55,16 +56,24 @@ export function Header({
 
           {/* Desktop Navigation */}
           {isDesktop && (
-            <nav className="flex items-center gap-2 text-body font-sans">
-              {navItems.map((item) => (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className="text-foreground hover:text-primary transition-colors duration-200 focus-visible:outline-ring"
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <nav className="flex items-center gap-8 text-body font-sans ml-10">
+              {navItems.map((item) => {
+                const isActive = location.pathname === item.href
+                return (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    className={`transition-colors duration-200 focus-visible:outline-ring ${
+                      isActive
+                        ? 'text-primary font-semibold'
+                        : 'text-foreground hover:text-primary'
+                    }`}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                )
+              })}
             </nav>
           )}
 

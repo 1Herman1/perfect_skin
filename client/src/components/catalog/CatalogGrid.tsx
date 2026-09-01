@@ -18,12 +18,12 @@ export function CatalogGrid({ categories }: CatalogGridProps) {
           to={`/catalog/all`}
           className="block bg-card rounded-block overflow-hidden transition-transform duration-200 hover:-translate-y-1"
         >
-          <div className="aspect-video bg-accent flex items-center justify-center group">
+          <div className="min-h-[220px] py-12 bg-accent flex items-center justify-center group">
             <div className="text-center">
-              <h2 className="text-heading font-heading font-bold text-primary-foreground text-4xl mb-2 group-hover:-translate-y-1 transition-transform duration-200">
+              <h2 className="text-heading font-heading font-bold text-foreground text-4xl mb-2 group-hover:-translate-y-1 transition-transform duration-200">
                 Все средства
               </h2>
-              <p className="text-primary-foreground text-lg opacity-90">{firstCategory.productCount} товаров</p>
+              <p className="text-foreground/70 text-lg">{firstCategory.productCount} товаров</p>
             </div>
           </div>
         </Link>

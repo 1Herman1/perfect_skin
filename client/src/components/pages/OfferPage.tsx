@@ -17,17 +17,13 @@ export function OfferPage() {
   return (
     <div className="container-app py-12 md:py-16">
       <div className="max-w-prose mx-auto">
-        <h1 className="text-2xl font-heading font-bold uppercase tracking-tight text-foreground mb-3">
+        <h1 className="text-h3 md:text-h2 font-heading font-bold uppercase tracking-tight text-foreground mb-3">
           Публичная оферта
         </h1>
         <p className="text-muted-foreground leading-relaxed mb-4">
           Редакция от {UPDATED_AT}. Это предложение заключить договор розничной
           купли-продажи на условиях, описанных ниже. Оформляя заказ, вы
           принимаете его целиком.
-        </p>
-        <p className="text-sm text-muted-foreground bg-muted rounded-block px-4 py-3 mb-10">
-          Документ подготовлен как проект и требует проверки юристом перед
-          запуском магазина.
         </p>
 
         <Section title="1. Стороны договора">

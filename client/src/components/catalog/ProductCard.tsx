@@ -94,7 +94,7 @@ export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-2">
+      <div className="p-5">
         {/* Brand and Line */}
         {(product.brand || product.line) && (
           <div className="text-xs text-muted-foreground mb-2">

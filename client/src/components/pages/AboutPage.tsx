@@ -6,7 +6,7 @@ export function AboutPage() {
     <div className="bg-background">
       {/* Header */}
       <div className="container-app py-12 md:py-20">
-        <h1 className="text-2xl font-heading font-bold uppercase tracking-tight text-foreground mb-8">
+        <h1 className="text-h3 md:text-h2 font-heading font-bold uppercase tracking-tight text-foreground mb-8">
           О компании
         </h1>
 

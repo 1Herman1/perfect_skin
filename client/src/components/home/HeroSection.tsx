@@ -29,7 +29,7 @@ export function HeroSection() {
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row gap-1 mb-3 md:mb-4">
+            <div className="flex flex-col sm:flex-row gap-3 mb-6 md:mb-10">
               <Link
                 to="/catalog"
                 className="inline-flex items-center justify-center bg-primary text-primary-foreground font-heading font-bold px-6 py-3 rounded-pill transition-opacity duration-200 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11"
@@ -61,10 +61,10 @@ export function HeroSection() {
           {/* RIGHT: Accent background with product card */}
           <div className="relative min-h-[500px] flex items-start justify-end">
             {/* Accent bg block (golden) */}
-            <div className="absolute inset-0 bg-accent rounded-block hidden md:block" aria-hidden="true" />
+            <img src="/photos/m4.png" className="absolute inset-0 w-full h-full object-cover rounded-block hidden md:block" alt="Косметика ISSEIMI в воде" />
 
             {/* Product card (beige) */}
-            <div className="relative z-10 bg-background rounded-block p-2 md:p-10 max-w-[320px] ml-auto mt-[180px] md:-ml-10">
+            <Link to="/product/bee-venom-cream-antivozrastnoj-krem" className="relative z-10 bg-background rounded-block p-6 md:p-10 max-w-[320px] ml-auto mt-32 md:mt-48 md:-ml-10 block hover:no-underline">
               {/* Badge */}
               <div className="text-label font-bold text-gold-text mb-2">
                 ХИТ ПРОДАЖ · ISSEIMI BASE
@@ -86,10 +86,10 @@ export function HeroSection() {
               </div>
 
               {/* CTA Button */}
-              <button className="w-full bg-primary text-primary-foreground font-heading font-bold py-3 px-6 rounded-pill transition-opacity duration-200 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11">
+              <span className="w-full bg-primary text-primary-foreground font-heading font-bold py-3 px-6 rounded-pill transition-opacity duration-200 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11 flex items-center justify-center">
                 В корзину
-              </button>
-            </div>
+              </span>
+            </Link>
           </div>
         </div>
       </div>

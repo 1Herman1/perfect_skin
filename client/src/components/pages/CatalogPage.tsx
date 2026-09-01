@@ -199,7 +199,7 @@ export function CatalogPage() {
             <select
               value={filters.sort || 'newest'}
               onChange={e => handleSortChange(e.target.value)}
-              className="px-1 py-0.5 border border-border rounded text-sm text-foreground bg-card min-h-10"
+              className="px-1 py-0.5 border border-border-strong rounded text-sm text-foreground bg-card min-h-10"
             >
               <option value="newest">Новинки</option>
               <option value="price_asc">Цена: возрастание</option>

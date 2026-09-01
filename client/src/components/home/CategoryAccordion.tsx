@@ -83,13 +83,13 @@ export function CategoryAccordion() {
 
               {/* Number - desktop large, mobile hidden */}
               <div
-                className="hidden md:flex absolute right-2 bottom-2 text-9xl font-heading font-900 opacity-12 pointer-events-none leading-none"
+                className="hidden md:flex absolute right-2 bottom-2 text-9xl font-heading opacity-10 pointer-events-none leading-none"
               >
                 {cat.num}
               </div>
 
               {/* Open content - visible on desktop hover, visible on mobile */}
-              <div className="absolute inset-0 p-4 md:p-10 flex flex-col justify-start opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-visible:opacity-100 transition-opacity duration-300 pointer-events-none">
+              <div className="absolute inset-0 p-4 md:p-10 flex flex-col justify-start opacity-100 transition-opacity duration-300 pointer-events-none">
                 <div className="text-label font-bold opacity-70 mb-2">
                   {cat.num} · {cat.shortLabel}
                 </div>
