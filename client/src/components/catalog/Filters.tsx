@@ -31,14 +31,18 @@ function FacetCheckboxGroup({
   onSelect: (values: string[]) => void
   disabled?: boolean
 }) {
+  const [expanded, setExpanded] = useState(facets.length <= 6)
+  const displayedFacets = expanded ? facets : facets.slice(0, 5)
+  const hasMore = facets.length > 6
+
   return (
     <div className="border-b border-border py-1 last:border-b-0">
       <h3 className="font-sans font-bold text-foreground text-sm mb-3">{label}</h3>
       <div className="space-y-2">
-        {facets.map(facet => (
+        {displayedFacets.map(facet => (
           <label
             key={facet.value}
-            className="flex items-center gap-3 cursor-pointer min-h-10"
+            className="flex items-center gap-3 cursor-pointer min-h-11"
           >
             <input
               type="checkbox"
@@ -50,7 +54,7 @@ function FacetCheckboxGroup({
                 onSelect(newValues)
               }}
               disabled={facet.count === 0 || disabled}
-              className="w-4 h-4 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              className="w-5 h-5 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 accent-primary"
             />
             <span className={`text-sm ${facet.count === 0 ? 'text-muted-foreground' : 'text-foreground'}`}>
               {facet.label}
@@ -59,6 +63,14 @@ function FacetCheckboxGroup({
           </label>
         ))}
       </div>
+      {hasMore && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="mt-2 w-full text-primary text-sm font-semibold hover:text-primary/80 transition-colors min-h-11 flex items-center justify-center"
+        >
+          {expanded ? `Скрыть (${facets.length - 5})` : `Ещё ${facets.length - 5}`}
+        </button>
+      )}
     </div>
   )
 }
@@ -180,7 +192,7 @@ export function Filters({
                 value={minPrice}
                 onChange={e => setMinPrice(e.target.value)}
                 onBlur={handlePriceChange}
-                className="flex-1 px-3 py-0.5 border border-border-strong rounded text-sm min-h-10"
+                className="flex-1 min-w-0 w-full px-3 py-2 border border-border-strong rounded text-sm min-h-11"
               />
               <input
                 type="number"
@@ -188,7 +200,7 @@ export function Filters({
                 value={maxPrice}
                 onChange={e => setMaxPrice(e.target.value)}
                 onBlur={handlePriceChange}
-                className="flex-1 px-3 py-0.5 border border-border-strong rounded text-sm min-h-10"
+                className="flex-1 min-w-0 w-full px-3 py-2 border border-border-strong rounded text-sm min-h-11"
               />
             </div>
             <div className="text-xs text-muted-foreground">
@@ -268,5 +280,5 @@ export function Filters({
     )
   }
 
-  return <div className="bg-white rounded-lg p-6 space-y-0">{content}</div>
+  return <div className="bg-white rounded-lg p-6 space-y-0 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">{content}</div>
 }

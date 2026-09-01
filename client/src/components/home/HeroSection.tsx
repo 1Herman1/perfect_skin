@@ -17,10 +17,12 @@ export function HeroSection() {
             </div>
 
             {/* Main heading */}
-            <h1 className="text-display font-heading font-bold mb-2 md:mb-10 leading-tight">
-              ПРО-КОСМЕТИКА
-              <span className="block">ИЗ ИСПАНИИ</span>
-            </h1>
+            <div className="max-w-[680px]">
+              <h1 className="text-5xl md:text-6xl font-heading font-bold mb-2 md:mb-10 leading-[1.12]">
+                ПРО-КОСМЕТИКА
+                <span className="block">ИЗ ИСПАНИИ</span>
+              </h1>
+            </div>
 
             {/* Subtitle */}
             <p className="text-body leading-body text-muted-foreground mb-10 md:mb-3 max-w-prose">
@@ -38,7 +40,7 @@ export function HeroSection() {
               </Link>
               <button
                 onClick={openQuiz}
-                className="inline-flex items-center justify-center bg-accent text-foreground font-heading font-bold px-6 py-3 rounded-pill border-2 border-accent transition-opacity duration-200 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11"
+                className="inline-flex items-center justify-center border border-primary text-primary bg-transparent font-heading font-bold px-6 py-3 rounded-pill transition-opacity duration-200 hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-h-11"
               >
                 Подобрать уход
               </button>

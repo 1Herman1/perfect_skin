@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const categories = [
@@ -17,7 +16,7 @@ const categories = [
     shortLabel: 'Сыворотки',
     desc: 'Активные концентраты для интенсивного ухода.',
     slug: 'syvorotki',
-    bgColor: 'bg-border',
+    bgColor: 'bg-accent/60',
     textColor: 'text-foreground',
   },
   {
@@ -26,9 +25,8 @@ const categories = [
     shortLabel: 'Маски',
     desc: 'Питающие и очищающие маски для лица.',
     slug: 'maski',
-    bgColor: 'bg-primary-foreground',
+    bgColor: 'bg-accent/30',
     textColor: 'text-foreground',
-    borderClass: 'ring-1 ring-inset ring-border',
   },
   {
     num: '04',
@@ -42,8 +40,6 @@ const categories = [
 ]
 
 export function CategoryAccordion() {
-  const [activeIdx, setActiveIdx] = useState(0)
-
   return (
     <section id="catalog" className="bg-background py-20 md:py-32">
       <div className="container-app">
@@ -51,55 +47,36 @@ export function CategoryAccordion() {
           Категории
         </h2>
 
-        {/* Accordion: Desktop flex-row, mobile flex-col */}
+        {/* Accordion: Desktop grid, mobile flex-col */}
         <div
-          className="flex flex-col md:flex-row gap-3 md:gap-1 md:h-full"
+          className="grid grid-cols-1 md:grid-cols-4 gap-4 md:h-full"
           style={{ minHeight: '160px' }}
         >
-          {categories.map((cat, idx) => (
+          {categories.map((cat) => (
             <Link
               key={cat.slug}
               to={`/catalog/${cat.slug}`}
-              onMouseEnter={() => setActiveIdx(idx)}
-              onFocus={() => setActiveIdx(idx)}
               className={`
-                relative flex-1 min-w-0 overflow-hidden rounded-block
-                transition-[flex] duration-300 ease-out
+                relative overflow-hidden rounded-block
+                transition-transform duration-300 ease-out
                 group
-                ${cat.bgColor} ${cat.textColor} ${cat.borderClass || ''}
-                md:hover:flex-grow-[2] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
+                ${cat.bgColor} ${cat.textColor}
+                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
                 md:min-h-96 min-h-40
               `}
-              style={{
-                flex: activeIdx === idx && typeof window !== 'undefined' && window.innerWidth >= 768 ? '1.5 1 0' : '1 1 0',
-              }}
             >
-              {/* Spine (vertical) - desktop only */}
-              <div className="hidden md:flex absolute left-0 top-0 bottom-0 items-center justify-center w-12 md:w-16 flex-shrink-0 pointer-events-none">
-                <div className="spine-vertical">
-                  {cat.title}
-                </div>
-              </div>
-
-              {/* Number - desktop large, mobile hidden */}
-              <div
-                className="hidden md:flex absolute right-2 bottom-2 text-9xl font-heading opacity-10 pointer-events-none leading-none"
-              >
-                {cat.num}
-              </div>
-
-              {/* Open content - visible on desktop hover, visible on mobile */}
-              <div className="absolute inset-0 p-4 md:p-10 flex flex-col justify-start opacity-100 transition-opacity duration-300 pointer-events-none">
+              {/* Content */}
+              <div className="p-4 md:p-6 flex flex-col h-full">
                 <div className="text-label font-bold opacity-70 mb-2">
                   {cat.num} · {cat.shortLabel}
                 </div>
                 <h3 className="text-h3 font-heading font-bold mb-3">
                   {cat.title}
                 </h3>
-                <p className="text-body leading-body opacity-90 mb-4">
+                <p className="text-body leading-body opacity-90 flex-1">
                   {cat.desc}
                 </p>
-                <div className="hidden md:block mt-auto text-body font-bold opacity-60">→</div>
+                <div className="mt-4 text-body font-bold opacity-60">→</div>
               </div>
             </Link>
           ))}

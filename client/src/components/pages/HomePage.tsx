@@ -3,7 +3,6 @@ import { CtaTiles } from '@/components/home/CtaTiles'
 import { BrandsSection } from '@/components/home/BrandsSection'
 import { CategoryAccordion } from '@/components/home/CategoryAccordion'
 import { BestsellerSection } from '@/components/home/BestsellerSection'
-import { WhyHeberFarma } from '@/components/home/WhyHeberFarma'
 import { About } from '@/components/home/About'
 
 export function HomePage() {
@@ -23,9 +22,6 @@ export function HomePage() {
 
       {/* Bestsellers */}
       <BestsellerSection />
-
-      {/* Why Heber Farma */}
-      <WhyHeberFarma />
 
       {/* About */}
       <About />

@@ -52,7 +52,7 @@ export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
   }
 
   return (
-    <div className="bg-card rounded-block overflow-hidden transition-transform duration-200 hover:-translate-y-1">
+    <div className="bg-card rounded-block overflow-hidden transition-transform duration-200 hover:-translate-y-1 flex flex-col h-full">
       {/* Image */}
       <div className="relative">
         <Link to={`/product/${product.slug}`} className="block overflow-hidden bg-card">
@@ -94,7 +94,7 @@ export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
       </div>
 
       {/* Content */}
-      <div className="p-5">
+      <div className="p-5 flex flex-col flex-1">
         {/* Brand and Line */}
         {(product.brand || product.line) && (
           <div className="text-xs text-muted-foreground mb-2">
@@ -107,35 +107,38 @@ export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
         {/* Name */}
         <Link
           to={`/product/${product.slug}`}
-          className="block text-body font-sans font-bold text-foreground mb-3 hover:text-primary transition-colors"
+          className="block text-body font-sans font-bold text-foreground mb-3 hover:text-primary transition-colors line-clamp-2 min-h-[3rem]"
         >
           {product.name}
         </Link>
 
-        {/* Price */}
-        <div className="flex items-baseline gap-2 mb-4">
-          <span className="text-lg font-semibold text-foreground">{formatPrice(product.minPrice)}</span>
-          {product.oldPrice && (
-            <span className="text-sm text-muted-foreground line-through">
-              {formatPrice(product.oldPrice)}
-            </span>
-          )}
-        </div>
+        {/* Price and Button */}
+        <div className="mt-auto">
+          {/* Price */}
+          <div className="flex items-baseline gap-2 mb-4">
+            <span className="text-lg font-semibold text-foreground">{formatPrice(product.minPrice)}</span>
+            {product.oldPrice && (
+              <span className="text-sm text-muted-foreground line-through">
+                {formatPrice(product.oldPrice)}
+              </span>
+            )}
+          </div>
 
-        {/* Button */}
-        <button
-          onClick={handleAddToCart}
-          disabled={!product.inStock || addingState === 'loading'}
-          className="w-full py-3 px-6 bg-primary text-primary-foreground font-sans font-semibold rounded-pill hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200 min-h-11"
-        >
-          {addingState === 'success'
-            ? 'Добавлено ✓'
-            : addingState === 'loading'
-              ? 'Добавляю...'
-              : product.inStock
-                ? 'В корзину'
-                : 'Нет в наличии'}
-        </button>
+          {/* Button */}
+          <button
+            onClick={handleAddToCart}
+            disabled={!product.inStock || addingState === 'loading'}
+            className="w-full py-3 px-6 bg-primary text-primary-foreground font-sans font-semibold rounded-pill hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200 min-h-11"
+          >
+            {addingState === 'success'
+              ? 'Добавлено ✓'
+              : addingState === 'loading'
+                ? 'Добавляю...'
+                : product.inStock
+                  ? 'В корзину'
+                  : 'Нет в наличии'}
+          </button>
+        </div>
       </div>
     </div>
   )

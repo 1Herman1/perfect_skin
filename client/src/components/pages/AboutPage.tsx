@@ -1,5 +1,4 @@
 import { About } from '@/components/home/About'
-import { WhyHeberFarma } from '@/components/home/WhyHeberFarma'
 
 export function AboutPage() {
   return (
@@ -37,9 +36,6 @@ export function AboutPage() {
           />
         </div>
       </div>
-
-      {/* Why Heber Farma */}
-      <WhyHeberFarma />
 
       {/* Company stats */}
       <About />
