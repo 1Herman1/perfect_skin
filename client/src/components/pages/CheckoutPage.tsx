@@ -245,7 +245,7 @@ export function CheckoutPage() {
                 Войти
               </Link>
               <p className="text-sm text-muted-foreground mt-4">
-                Или проверяйте статус по номеру заказа и email — вход не обязателен со ссылкой{' '}
+                Или проверяйте статус по номеру заказа и email — вход не обязателен:{' '}
                 <Link to={`/track?number=${orderPlaced.number}`} className="underline underline-offset-2">
                   Проверить статус без входа
                 </Link>
