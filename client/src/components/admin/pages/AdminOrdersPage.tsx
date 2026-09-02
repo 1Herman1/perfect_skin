@@ -207,7 +207,7 @@ export function AdminOrdersPage() {
                   <tr key={order.number} className="border-b border-border hover:bg-muted/30">
                     <td className="px-6 py-4 text-foreground font-semibold">
                       <Link
-                        to={`/admin/orders/${order.number}`}
+                        to={`/admin/orders/${order.id}`}
                         className="text-primary hover:underline focus-visible:outline-ring"
                       >
                         {order.number}

@@ -4,6 +4,7 @@ import { fetchApi } from './api'
  * Тип заказа на странице админа
  */
 export interface AdminOrder {
+  id: string
   number: string
   createdAt: string
   status: string
@@ -60,11 +61,26 @@ export interface AdminOrdersResponse {
  */
 export interface AdminVariant {
   id: string
-  sku: string
-  volumeMl: number
-  volumeLabel: string
-  quantity: number
-  price: number
+  productId: string
+  product: {
+    id: string
+    name: string
+    slug: string
+    brand: {
+      id: string
+      name: string
+    } | null
+  }
+  volumeValue: number
+  volumeUnit: 'ml' | 'g' | 'pcs'
+  volumeLabel: string | null
+  retailPrice: number
+  oldRetailPrice: number | null
+  stock: number
+  sku: string | null
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 /**
@@ -84,14 +100,39 @@ export interface AdminProduct {
  * Ответ дашборда
  */
 export interface AdminDashboardData {
-  ordersTotal: number
-  ordersNew: number
-  ordersInTransit: number
-  revenue: number
-  topProducts: {
-    name: string
-    quantity: number
-  }[]
+  ordersByStatus: {
+    new: number
+    confirmed: number
+    packed: number
+    in_transit: number
+    delivered: number
+    cancelled: number
+  }
+  revenue: {
+    today: number
+    week: number
+    month: number
+  }
+  recentOrders: Array<{
+    id: string
+    number: string
+    createdAt: string
+    recipientName: string
+    total: number
+    status: string
+    paymentStatus: string
+  }>
+  lowStock: Array<{
+    variantId: string
+    productName: string
+    volumeLabel: string
+    stock: number
+  }>
+  salesByDay: Array<{
+    date: string
+    ordersCount: number
+    revenue: number
+  }>
 }
 
 // ============ Функции API ============
@@ -151,20 +192,26 @@ export async function adminUpdateOrder(
 export async function adminListVariants(
   params?: {
     search?: string
-    skip?: number
+    isActive?: boolean
+    lowStock?: boolean
+    offset?: number
     limit?: number
   }
 ): Promise<{
   items: AdminVariant[]
   total: number
+  limit: number
+  offset: number
 }> {
   const query = new URLSearchParams()
   if (params?.search) query.append('search', params.search)
-  if (params?.skip !== undefined) query.append('skip', String(params.skip))
+  if (params?.isActive !== undefined) query.append('isActive', String(params.isActive))
+  if (params?.lowStock !== undefined) query.append('lowStock', String(params.lowStock))
+  if (params?.offset !== undefined) query.append('offset', String(params.offset))
   if (params?.limit !== undefined) query.append('limit', String(params.limit))
 
   const url = `/api/v1/admin/variants${query.toString() ? `?${query.toString()}` : ''}`
-  return fetchApi<{ items: AdminVariant[]; total: number }>(url)
+  return fetchApi<{ items: AdminVariant[]; total: number; limit: number; offset: number }>(url)
 }
 
 /**
@@ -173,8 +220,9 @@ export async function adminListVariants(
 export async function adminUpdateVariant(
   id: string,
   body: {
-    quantity?: number
-    price?: number
+    stock?: number
+    retailPrice?: number
+    isActive?: boolean
   }
 ): Promise<AdminVariant> {
   return fetchApi<AdminVariant>(
@@ -195,6 +243,7 @@ export async function adminUpdateProduct(
     name?: string
     description?: string
     isActive?: boolean
+    isFeatured?: boolean
   }
 ): Promise<AdminProduct> {
   return fetchApi<AdminProduct>(
@@ -519,4 +568,25 @@ export async function searchPublicProducts(query: string): Promise<Array<{
 
   return fetchApi(`/api/v1/products?${params.toString()}`)
     .then((result: any) => result.items || [])
+}
+
+// ============ Синхронизация с 1С ============
+
+/**
+ * Запись журнала синхронизации
+ */
+export interface SyncLogItem {
+  id: string
+  direction: 'import' | 'export' | 'auth'
+  status: 'success' | 'failed' | 'pending'
+  itemsCount: number
+  errorText?: string | null
+  createdAt: string
+}
+
+/**
+ * Получить журнал синхронизации
+ */
+export async function getSyncLog(): Promise<{ items: SyncLogItem[] }> {
+  return fetchApi<{ items: SyncLogItem[] }>('/api/v1/admin/sync-log')
 }

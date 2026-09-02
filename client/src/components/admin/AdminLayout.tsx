@@ -15,6 +15,7 @@ const navItems: NavItem[] = [
   { label: 'Товары', href: '/admin/products' },
   { label: 'Промокоды', href: '/admin/promo' },
   { label: 'Статьи', href: '/admin/posts' },
+  { label: 'Обмен 1С', href: '/admin/sync' },
 ]
 
 export function AdminLayout() {

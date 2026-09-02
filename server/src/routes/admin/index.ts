@@ -5,8 +5,19 @@ import { ordersRoutes } from './orders.js'
 import { productsRoutes } from './products.js'
 import { promoRoutes } from './promo.js'
 import { postsRoutes } from './posts.js'
+import { dashboardRoutes } from './dashboard.js'
+import { syncRoutes } from './sync.js'
 
 export default fastifyPlugin(async (app: FastifyInstance) => {
+  // Dashboard routes: all staff roles
+  const dashboardPreHandlers = [app.authenticate, checkRole(['super_admin', 'orders_manager', 'products_manager', 'content_manager'])]
+  await app.register(
+    async (instance) => dashboardRoutes(instance, dashboardPreHandlers),
+    {
+      prefix: '/api/v1/admin',
+    }
+  )
+
   // Orders routes: super_admin or orders_manager
   const ordersPreHandlers = [app.authenticate, checkRole(['super_admin', 'orders_manager'])]
   await app.register(
@@ -38,6 +49,15 @@ export default fastifyPlugin(async (app: FastifyInstance) => {
   const postsPreHandlers = [app.authenticate, checkRole(['super_admin', 'content_manager'])]
   await app.register(
     async (instance) => postsRoutes(instance, postsPreHandlers),
+    {
+      prefix: '/api/v1/admin',
+    }
+  )
+
+  // Sync log routes: super_admin only
+  const syncPreHandlers = [app.authenticate, checkRole(['super_admin'])]
+  await app.register(
+    async (instance) => syncRoutes(instance, syncPreHandlers),
     {
       prefix: '/api/v1/admin',
     }

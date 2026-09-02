@@ -318,7 +318,9 @@ export class AdminPromoService {
       payout: number
     }
   }> {
-    // Получить все погашения кодов за период (только оплаченные заказы)
+    // Все погашения кодов за период по неотменённым заказам; выручка и
+    // выплата дальше считаются только по оплаченным, но «сколько заказов
+    // пришло по коду» должно включать и ещё не оплаченные.
     const redemptions = await db.promoCodeRedemption.findMany({
       where: {
         createdAt: {
@@ -326,7 +328,6 @@ export class AdminPromoService {
           lte: to,
         },
         order: {
-          paymentStatus: 'paid',
           status: {
             not: 'cancelled',
           },
@@ -354,7 +355,7 @@ export class AdminPromoService {
       string,
       {
         partner: { id: string; name: string; commissionPercent: number }
-        orders: { id: string; total: number }[]
+        orders: { id: string; total: number; paid: boolean }[]
         redemptions: { discountAmount: number }[]
       }
     >()
@@ -376,8 +377,9 @@ export class AdminPromoService {
       }
 
       const data = byPartner.get(key)!
-      data.orders.push({ id: redemption.order.id, total: redemption.order.total })
-      data.redemptions.push({ discountAmount: redemption.discountAmount })
+      const paid = redemption.order.paymentStatus === 'paid'
+      data.orders.push({ id: redemption.order.id, total: redemption.order.total, paid })
+      if (paid) data.redemptions.push({ discountAmount: redemption.discountAmount })
     }
 
     // Построить итоговые строки
@@ -389,9 +391,10 @@ export class AdminPromoService {
     let totalPayout = 0
 
     for (const [, data] of byPartner) {
-      const uniqueOrders = new Set(data.orders.map((o) => o.id))
-      const ordersCount = uniqueOrders.size
-      const revenue = data.orders.reduce((sum, o) => sum + o.total, 0)
+      const ordersCount = new Set(data.orders.map((o) => o.id)).size
+      const paidOrders = data.orders.filter((o) => o.paid)
+      const paidOrdersCount = new Set(paidOrders.map((o) => o.id)).size
+      const revenue = paidOrders.reduce((sum, o) => sum + o.total, 0)
       const discount = data.redemptions.reduce((sum, r) => sum + r.discountAmount, 0)
       const payout = Math.round((revenue * data.partner.commissionPercent) / 100)
 
@@ -400,14 +403,14 @@ export class AdminPromoService {
         partnerName: data.partner.name,
         commissionPercent: data.partner.commissionPercent,
         ordersCount,
-        paidOrdersCount: ordersCount, // все в отчёте уже paid
+        paidOrdersCount,
         revenue,
         clientDiscount: discount,
         payout,
       })
 
       totalOrdersCount += ordersCount
-      totalPaidOrdersCount += ordersCount
+      totalPaidOrdersCount += paidOrdersCount
       totalRevenue += revenue
       totalDiscount += discount
       totalPayout += payout

@@ -20,7 +20,7 @@ const PAYMENT_STATUS_OPTIONS = [
 ]
 
 export function AdminOrderPage() {
-  const { number } = useParams<{ number: string }>()
+  const { id: number } = useParams<{ id: string }>()
   const [adminOrder, setAdminOrder] = useState<AdminOrderDetail | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

@@ -476,8 +476,9 @@ function ReportTab({ onError }: { onError: (msg: string) => void }) {
     setFormError('')
     onError('')
     try {
-      const from = new Date(fromDate).toISOString()
-      const to = new Date(toDate).toISOString()
+      const from = new Date(fromDate + 'T00:00:00').toISOString()
+      // «По дату» включительно — до конца выбранного дня.
+      const to = new Date(toDate + 'T23:59:59.999').toISOString()
       const data = await adminGetPayoutReport(from, to)
       setReport(data)
     } catch (err) {

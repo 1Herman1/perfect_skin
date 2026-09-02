@@ -34,6 +34,7 @@ const AdminProductsPage = lazy(() => import('@/components/admin/pages/AdminProdu
 const AdminPromoPage = lazy(() => import('@/components/admin/pages/AdminPromoPage').then((m) => ({ default: m.AdminPromoPage })))
 const AdminPostsPage = lazy(() => import('@/components/admin/pages/AdminPostsPage').then((m) => ({ default: m.AdminPostsPage })))
 const AdminPostEditPage = lazy(() => import('@/components/admin/pages/AdminPostEditPage').then((m) => ({ default: m.AdminPostEditPage })))
+const AdminSyncPage = lazy(() => import('@/components/admin/pages/AdminSyncPage').then((m) => ({ default: m.AdminSyncPage })))
 
 const adminRoles = ['super_admin', 'orders_manager', 'products_manager', 'content_manager']
 
@@ -65,11 +66,12 @@ function App() {
           >
             <Route index element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminDashboardPage /></Suspense>} />
             <Route path="orders" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminOrdersPage /></Suspense>} />
-            <Route path="orders/:number" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminOrderPage /></Suspense>} />
+            <Route path="orders/:id" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminOrderPage /></Suspense>} />
             <Route path="products" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminProductsPage /></Suspense>} />
             <Route path="promo" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminPromoPage /></Suspense>} />
             <Route path="posts" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminPostsPage /></Suspense>} />
             <Route path="posts/:id" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminPostEditPage /></Suspense>} />
+            <Route path="sync" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminSyncPage /></Suspense>} />
           </Route>
 
           {/* Shop routes */}

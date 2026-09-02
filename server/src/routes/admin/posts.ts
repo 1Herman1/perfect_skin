@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify'
 import { z } from 'zod'
 import { postService } from '../../services/post.service.js'
+import { db } from '../../lib/db.js'
 import { ApiError } from '../../lib/errors.js'
 
 const listPostsSchema = z.object({
@@ -119,8 +120,9 @@ export async function postsRoutes(app: FastifyInstance, preHandlers: any[]) {
       },
     },
     async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
-      const post = await postService.listPosts({ limit: 1, offset: 0 })
-      const found = post.items.find((p: any) => p.id === request.params.id)
+      const found = await db.post.findFirst({
+        where: { id: request.params.id, deletedAt: null },
+      })
 
       if (!found) {
         throw new ApiError(404, 'NOT_FOUND', 'Статья не найдена')
