@@ -48,6 +48,14 @@ export function Footer() {
                   </li>
                   <li>
                     <Link
+                      to="/blog"
+                      className="text-body-sm font-sans hover:text-accent-on-dark transition-colors duration-200 focus-visible:outline-ring"
+                    >
+                      Статьи
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
                       to="/offer"
                       className="text-body-sm font-sans hover:text-accent-on-dark transition-colors duration-200 focus-visible:outline-ring"
                     >

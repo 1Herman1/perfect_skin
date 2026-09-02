@@ -332,7 +332,7 @@ export class OrderService {
       image: string | null
     }>
     subtotal: number
-    promo: { code: string; percent: number; discount: number } | null
+    promo: { code: string; percent: number; discount: number; subtotal: number } | null
     deliveryCost: number
     total: number
     comment: string | null
@@ -374,6 +374,7 @@ export class OrderService {
             code: order.redemption?.promoCode?.code ?? '',
             percent: order.redemption?.promoCode?.percent ?? 0,
             discount: Number(order.promoDiscount),
+            subtotal: Number(order.subtotal),
           }
         : null,
       deliveryCost: Number(order.deliveryCost),

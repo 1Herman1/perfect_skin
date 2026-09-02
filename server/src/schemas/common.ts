@@ -620,4 +620,183 @@ export function registerCommonSchemas(app: FastifyInstance) {
       role: { type: 'string', enum: ['customer', 'admin'] },
     },
   })
+
+  app.addSchema({
+    $id: 'ps.adminVariant',
+    type: 'object',
+    additionalProperties: false,
+    required: ['id', 'productId', 'product', 'volumeValue', 'volumeUnit', 'retailPrice', 'stock', 'isActive'],
+    properties: {
+      id: { type: 'string', format: 'uuid' },
+      productId: { type: 'string', format: 'uuid' },
+      product: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['id', 'name', 'slug'],
+        properties: {
+          id: { type: 'string', format: 'uuid' },
+          name: { type: 'string' },
+          slug: { type: 'string' },
+          brand: {
+            type: ['object', 'null'],
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+            },
+          },
+        },
+      },
+      volumeValue: { type: 'number' },
+      volumeUnit: { type: 'string', enum: ['ml', 'g', 'pcs'] },
+      volumeLabel: { type: ['string', 'null'] },
+      retailPrice: { type: 'integer' },
+      oldRetailPrice: { type: ['integer', 'null'] },
+      stock: { type: 'integer' },
+      sku: { type: ['string', 'null'] },
+      isActive: { type: 'boolean' },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  })
+
+  app.addSchema({
+    $id: 'ps.adminOrder',
+    type: 'object',
+    additionalProperties: false,
+    required: ['id', 'number', 'status', 'paymentStatus', 'createdAt', 'updatedAt', 'recipient', 'user', 'items', 'subtotal', 'deliveryCost', 'total'],
+    properties: {
+      id: { type: 'string', format: 'uuid' },
+      number: { type: 'string' },
+      status: { type: 'string', enum: ['new', 'confirmed', 'packed', 'in_transit', 'delivered', 'cancelled'] },
+      paymentStatus: { type: 'string', enum: ['pending', 'paid', 'failed', 'refunded'] },
+      deliveryTrackNumber: { type: ['string', 'null'] },
+      adminNote: { type: ['string', 'null'] },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+      deliveryMethod: { type: 'string', enum: ['pickup', 'cdek_pvz', 'cdek_courier'] },
+      cdekPvzCode: { type: ['string', 'null'] },
+      deliveryAddress: { type: ['object', 'null'] },
+      user: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['name'],
+        properties: {
+          name: { type: ['string', 'null'] },
+          phone: { type: ['string', 'null'] },
+          email: { type: ['string', 'null'] },
+        },
+      },
+      recipient: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['name', 'phone'],
+        properties: {
+          name: { type: 'string' },
+          phone: { type: 'string' },
+          email: { type: ['string', 'null'] },
+        },
+      },
+      items: {
+        type: 'array',
+        items: { $ref: 'ps.orderItem#' },
+      },
+      subtotal: { type: 'integer' },
+      promo: { anyOf: [{ $ref: 'ps.promoResponse#' }, { type: 'null' }] },
+      deliveryCost: { type: 'integer' },
+      total: { type: 'integer' },
+      comment: { type: ['string', 'null'] },
+      paidAt: { type: ['string', 'null'], format: 'date-time' },
+    },
+  })
+
+  // Admin promo schemas
+  app.addSchema({
+    $id: 'ps.adminPartner',
+    type: 'object',
+    additionalProperties: false,
+    required: ['id', 'name', 'commissionPercent', 'isActive', 'codesCount', 'createdAt', 'updatedAt'],
+    properties: {
+      id: { type: 'string', format: 'uuid' },
+      name: { type: 'string' },
+      contact: { type: ['string', 'null'] },
+      commissionPercent: { type: 'integer', minimum: 0, maximum: 100 },
+      isActive: { type: 'boolean' },
+      codesCount: { type: 'integer' },
+      createdAt: { type: 'string', format: 'date-time' },
+      updatedAt: { type: 'string', format: 'date-time' },
+    },
+  })
+
+  app.addSchema({
+    $id: 'ps.adminPromoCode',
+    type: 'object',
+    additionalProperties: false,
+    required: ['id', 'code', 'percent', 'partner', 'usedCount', 'isActive', 'createdAt'],
+    properties: {
+      id: { type: 'string', format: 'uuid' },
+      code: { type: 'string' },
+      percent: { type: 'integer', minimum: 0, maximum: 100 },
+      partner: {
+        anyOf: [
+          {
+            type: 'object',
+            additionalProperties: false,
+            required: ['id', 'name'],
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+            },
+          },
+          { type: 'null' },
+        ],
+      },
+      maxRedemptions: { type: ['integer', 'null'] },
+      usedCount: { type: 'integer' },
+      minOrderAmount: { type: ['integer', 'null'] },
+      startsAt: { type: ['string', 'null'], format: 'date-time' },
+      expiresAt: { type: ['string', 'null'], format: 'date-time' },
+      isActive: { type: 'boolean' },
+      createdAt: { type: 'string', format: 'date-time' },
+    },
+  })
+
+  app.addSchema({
+    $id: 'ps.payoutReportRow',
+    type: 'object',
+    additionalProperties: false,
+    required: [
+      'partnerId',
+      'partnerName',
+      'commissionPercent',
+      'ordersCount',
+      'paidOrdersCount',
+      'revenue',
+      'clientDiscount',
+      'payout',
+    ],
+    properties: {
+      partnerId: { type: 'string', format: 'uuid' },
+      partnerName: { type: 'string' },
+      commissionPercent: { type: 'integer', minimum: 0, maximum: 100 },
+      ordersCount: { type: 'integer' },
+      paidOrdersCount: { type: 'integer' },
+      revenue: { type: 'integer' },
+      clientDiscount: { type: 'integer' },
+      payout: { type: 'integer' },
+    },
+  })
+
+  app.addSchema({
+    $id: 'ps.payoutReportTotals',
+    type: 'object',
+    additionalProperties: false,
+    required: ['ordersCount', 'paidOrdersCount', 'revenue', 'clientDiscount', 'payout'],
+    properties: {
+      ordersCount: { type: 'integer' },
+      paidOrdersCount: { type: 'integer' },
+      revenue: { type: 'integer' },
+      clientDiscount: { type: 'integer' },
+      payout: { type: 'integer' },
+    },
+  })
 }

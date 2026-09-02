@@ -32,7 +32,7 @@ export function Header({
   const { openCart, openFavorites } = useDrawer()
   const { count } = useCart()
   const { count: favCount } = useFavorites()
-  const { isAuthed } = useAuth()
+  const { isAuthed, user } = useAuth()
 
   return (
     <header className="border-b border-border bg-background">
@@ -133,13 +133,29 @@ export function Header({
                   )}
                 </div>
               )}
-              <Link
-                to={isAuthed ? '/orders' : '/auth'}
-                className="hidden sm:flex w-12 h-12 items-center justify-center hover:bg-muted rounded-pill transition-colors duration-200 focus-visible:outline-ring"
-                aria-label={isAuthed ? 'Мои заказы' : 'Вход'}
-              >
-                <IconUser className="w-5 h-5" />
-              </Link>
+              {/* Profile / Admin */}
+              <div className="hidden sm:flex items-center gap-1">
+                {isAuthed && user?.role !== 'customer' && (
+                  <Link
+                    to="/admin"
+                    className="hidden md:flex w-12 h-12 items-center justify-center hover:bg-muted rounded-pill transition-colors duration-200 focus-visible:outline-ring"
+                    aria-label="Админка"
+                    title="Админка"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.26 2.632 1.732-.44.9.023 2.04.9 2.532 1.6.776 1.6 3.414 0 4.19-.877.492-1.34 1.632-.9 2.532.678 1.472-.089 2.672-1.632 1.732-.996-.608-2.47-.15-3.15.807a1.724 1.724 0 01-2.573-1.066c-.426-1.756-2.924-1.756-3.35 0a1.724 1.724 0 01-2.573-1.066c-.44-.9-1.632-1.632-.9-2.532.877-.492 1.34-1.632.9-2.532-.678-1.472.089-2.672 1.632-1.732.996.608 2.47.15 3.15-.807a1.724 1.724 0 012.573 1.066z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </Link>
+                )}
+                <Link
+                  to={isAuthed ? '/orders' : '/auth'}
+                  className="w-12 h-12 flex items-center justify-center hover:bg-muted rounded-pill transition-colors duration-200 focus-visible:outline-ring"
+                  aria-label={isAuthed ? 'Мои заказы' : 'Вход'}
+                >
+                  <IconUser className="w-5 h-5" />
+                </Link>
+              </div>
             </div>
 
             {/* Mobile Menu Button */}

@@ -16,6 +16,8 @@ import promoRoutes from './routes/promo/index.js'
 import deliveryRoutes from './routes/delivery/index.js'
 import ordersRoutes from './routes/orders/index.js'
 import authRoutes from './routes/auth/index.js'
+import postsRoutes from './routes/posts/index.js'
+import adminRoutes from './routes/admin/index.js'
 
 const app = Fastify({
   logger: true,
@@ -105,6 +107,12 @@ await app.register(deliveryRoutes)
 await app.register(promoRoutes)
 await app.register(ordersRoutes)
 await app.register(authRoutes)
+
+// Register posts routes
+await app.register(postsRoutes, { prefix: '/api/v1' })
+
+// Register admin routes
+await app.register(adminRoutes)
 
 const start = async () => {
   try {
