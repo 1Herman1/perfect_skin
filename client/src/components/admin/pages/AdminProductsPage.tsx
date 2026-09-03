@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
-import { adminListVariants, adminUpdateVariant, type AdminVariant } from '@/lib/admin-api'
+import { adminListVariants, adminUpdateVariant, adminGetPopular, adminSetPopular, searchPublicProducts, type AdminVariant, type PopularProduct } from '@/lib/admin-api'
 import { ApiError } from '@/lib/api'
 import { formatPrice } from '@/lib/format'
 
+type Tab = 'variants' | 'popular'
+
 export function AdminProductsPage() {
+  const [activeTab, setActiveTab] = useState<Tab>('variants')
   const [variants, setVariants] = useState<AdminVariant[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -65,6 +68,36 @@ export function AdminProductsPage() {
         Товары
       </h1>
 
+      {/* Tabs */}
+      <div className="flex gap-2 mb-8 border-b border-border">
+        <button
+          onClick={() => {
+            setActiveTab('variants')
+            setOffset(0)
+          }}
+          className={`px-4 py-3 font-sans font-semibold text-sm border-b-2 transition-colors ${
+            activeTab === 'variants'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Варианты
+        </button>
+        <button
+          onClick={() => setActiveTab('popular')}
+          className={`px-4 py-3 font-sans font-semibold text-sm border-b-2 transition-colors ${
+            activeTab === 'popular'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground hover:text-foreground'
+          }`}
+        >
+          Популярные
+        </button>
+      </div>
+
+      {/* Content by tab */}
+      {activeTab === 'variants' && (
+        <>
       {/* Filters */}
       <div className="bg-card border border-border rounded-block p-6 mb-8">
         <form onSubmit={handleSearchSubmit} className="space-y-4">
@@ -198,7 +231,248 @@ export function AdminProductsPage() {
           </div>
         </div>
       )}
+        </>
+      )}
+
+      {activeTab === 'popular' && (
+        <PopularTab />
+      )}
     </div>
+  )
+}
+
+// ──────────────────────────────── Вкладка "Популярные" ────────────────────────────────
+
+function PopularTab() {
+  const [popular, setPopular] = useState<PopularProduct[]>([])
+  const [localOrder, setLocalOrder] = useState<PopularProduct[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchResults, setSearchResults] = useState<Array<{ id: string; name: string; slug: string; image: string | null; minPrice: number }>>([])
+  const [searchLoading, setSearchLoading] = useState(false)
+
+  const load = async () => {
+    setLoading(true)
+    setError('')
+    try {
+      const data = await adminGetPopular()
+      setPopular(data)
+      setLocalOrder(data)
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Ошибка загрузки'
+      setError(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  const handleSearch = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const q = e.target.value
+    setSearchQuery(q)
+    if (!q.trim()) {
+      setSearchResults([])
+      return
+    }
+
+    setSearchLoading(true)
+    try {
+      const results = await searchPublicProducts(q)
+      // Filter out already pinned products
+      const pinnedIds = new Set(localOrder.map((p) => p.id))
+      setSearchResults(results.filter((r) => !pinnedIds.has(r.id)))
+    } catch (err) {
+      console.error('Search error:', err)
+    } finally {
+      setSearchLoading(false)
+    }
+  }
+
+  const handleAddProduct = (product: (typeof searchResults)[0]) => {
+    setLocalOrder([
+      ...localOrder,
+      {
+        id: product.id,
+        name: product.name,
+        slug: product.slug,
+        image: product.image,
+        minPrice: product.minPrice,
+        popularPin: localOrder.length + 1,
+      },
+    ])
+    setSearchQuery('')
+    setSearchResults([])
+  }
+
+  const handleRemoveProduct = (id: string) => {
+    setLocalOrder(localOrder.filter((p) => p.id !== id))
+  }
+
+  const handleMoveUp = (index: number) => {
+    if (index > 0) {
+      const arr = [...localOrder]
+      ;[arr[index - 1], arr[index]] = [arr[index], arr[index - 1]]
+      setLocalOrder(arr)
+    }
+  }
+
+  const handleMoveDown = (index: number) => {
+    if (index < localOrder.length - 1) {
+      const arr = [...localOrder]
+      ;[arr[index], arr[index + 1]] = [arr[index + 1], arr[index]]
+      setLocalOrder(arr)
+    }
+  }
+
+  const handleSave = async () => {
+    setError('')
+    setSuccess('')
+    setSaving(true)
+    try {
+      const ids = localOrder.map((p) => p.id)
+      await adminSetPopular(ids)
+      setSuccess('Порядок сохранён')
+      setTimeout(() => setSuccess(''), 3000)
+      await load()
+    } catch (err) {
+      const msg = err instanceof ApiError ? err.message : 'Ошибка при сохранении'
+      setError(msg)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const canSave = JSON.stringify(localOrder.map((p) => p.id)) !== JSON.stringify(popular.map((p) => p.id))
+
+  return (
+    <>
+      {error && (
+        <div className="bg-destructive/10 text-destructive p-4 rounded-block mb-6">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="bg-success/10 text-success p-4 rounded-block mb-6">
+          {success}
+        </div>
+      )}
+
+      {/* Search box */}
+      <div className="bg-card border border-border rounded-block p-6 mb-8">
+        <h2 className="text-lg font-heading font-bold text-foreground mb-4">Добавить товар</h2>
+        <div className="space-y-3">
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={handleSearch}
+            placeholder="Поиск товара…"
+            className="w-full px-4 py-2 border border-border-strong rounded-block font-sans text-foreground placeholder:text-muted-foreground bg-background focus:outline-ring focus:ring-2 focus:ring-ring"
+          />
+
+          {searchLoading && (
+            <div className="text-sm text-muted-foreground">Поиск…</div>
+          )}
+
+          {searchResults.length > 0 && (
+            <div className="border border-border rounded-block max-h-60 overflow-y-auto">
+              {searchResults.map((product) => (
+                <div
+                  key={product.id}
+                  className="p-3 border-b border-border last:border-b-0 hover:bg-muted flex items-center justify-between gap-4"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="font-semibold text-sm text-foreground truncate">
+                      {product.name}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {formatPrice(product.minPrice)}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleAddProduct(product)}
+                    className="px-3 py-1 bg-primary text-primary-foreground font-sans text-xs font-semibold rounded-block hover:bg-primary/90"
+                  >
+                    Добавить
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* List of popular products */}
+      <div className="bg-card border border-border rounded-block p-6 mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-heading font-bold text-foreground">
+            Закреплённые товары ({localOrder.length})
+          </h2>
+          <button
+            onClick={handleSave}
+            disabled={!canSave || saving}
+            className="px-6 py-2 bg-primary text-primary-foreground font-sans font-semibold rounded-block hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {saving ? 'Сохранение…' : 'Сохранить порядок'}
+          </button>
+        </div>
+
+        {loading ? (
+          <div className="text-center py-8 text-muted-foreground">Загрузка…</div>
+        ) : localOrder.length === 0 ? (
+          <div className="text-center py-8 text-muted-foreground">Нет закреплённых товаров</div>
+        ) : (
+          <ol className="space-y-2">
+            {localOrder.map((product, index) => (
+              <li
+                key={product.id}
+                className="flex items-center gap-4 p-4 border border-border rounded-block hover:bg-muted transition-colors"
+              >
+                <span className="text-lg font-heading font-bold text-muted-foreground w-8 text-right">
+                  {index + 1}.
+                </span>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-sm text-foreground">{product.name}</div>
+                  <div className="text-xs text-muted-foreground">{formatPrice(product.minPrice)}</div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => handleMoveUp(index)}
+                    disabled={index === 0}
+                    className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Вверх"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    onClick={() => handleMoveDown(index)}
+                    disabled={index === localOrder.length - 1}
+                    className="p-2 text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:cursor-not-allowed"
+                    title="Вниз"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    onClick={() => handleRemoveProduct(product.id)}
+                    className="p-2 text-destructive hover:text-destructive/80"
+                    title="Удалить"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </>
   )
 }
 

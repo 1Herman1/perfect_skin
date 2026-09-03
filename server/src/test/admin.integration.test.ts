@@ -14,6 +14,7 @@ import cartRoutes from '../routes/cart/index.js'
 import ordersRoutes from '../routes/orders/index.js'
 import publicPostsRoutes from '../routes/posts/index.js'
 import adminRoutes from '../routes/admin/index.js'
+import productsRoutes from '../routes/products/index.js'
 import { db } from '../lib/db.js'
 
 // Отдельный домен от checkout-теста (@ps-test.local): тот в beforeAll сносит
@@ -56,6 +57,7 @@ async function build() {
   await app.register(cartRoutes)
   await app.register(ordersRoutes)
   await app.register(publicPostsRoutes, { prefix: '/api/v1' })
+  await app.register(productsRoutes, { prefix: '/api/v1' })
   await app.register(adminRoutes)
 
   return app
@@ -440,5 +442,89 @@ describe('Admin Integration Tests', () => {
     expect(draftRes.statusCode).toBe(404)
     // Именно «не найдена», а не промах роутинга — иначе тест зелёный по ошибке.
     expect(JSON.parse(draftRes.body).error.code).toBe('NOT_FOUND')
+  })
+
+  // ──────────────────────────── 7. Популярные товары ────────────────────────────
+
+  it('PUT /admin/popular устанавливает порядок; GET показывает закреплённые первыми', async () => {
+    const auth = { authorization: `Bearer ${tokens.super}` }
+
+    // Получить 2 случайных товара
+    const products = await db.product.findMany({
+      where: { isActive: true, deletedAt: null },
+      select: { id: true, slug: true },
+      take: 2,
+    })
+    expect(products.length).toBe(2)
+    const [p1, p2] = products
+
+    // Установить их в популярные
+    const setRes = await app.inject({
+      method: 'PUT',
+      url: '/api/v1/admin/popular',
+      headers: auth,
+      payload: { productIds: [p1.id, p2.id] },
+    })
+    expect(setRes.statusCode).toBe(200)
+
+    // GET /admin/popular должен вернуть их в том же порядке
+    const getRes = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/popular',
+      headers: auth,
+    })
+    expect(getRes.statusCode).toBe(200)
+    const popular = JSON.parse(getRes.body)
+    expect(popular.length).toBe(2)
+    expect(popular[0].id).toBe(p1.id)
+    expect(popular[1].id).toBe(p2.id)
+    expect(popular[0].popularPin).toBe(1)
+    expect(popular[1].popularPin).toBe(2)
+
+    // Проверить в БД что пины установлены
+    const dbP1 = await db.product.findUnique({ where: { id: p1.id }, select: { popularPin: true } })
+    const dbP2 = await db.product.findUnique({ where: { id: p2.id }, select: { popularPin: true } })
+    expect(dbP1?.popularPin).toBe(1)
+    expect(dbP2?.popularPin).toBe(2)
+
+    // Обновить список (только один товар)
+    const updateRes = await app.inject({
+      method: 'PUT',
+      url: '/api/v1/admin/popular',
+      headers: auth,
+      payload: { productIds: [p2.id] },
+    })
+    expect(updateRes.statusCode).toBe(200)
+
+    // Первый товар уже не закреплён
+    const getRes2 = await app.inject({
+      method: 'GET',
+      url: '/api/v1/admin/popular',
+      headers: auth,
+    })
+    expect(getRes2.statusCode).toBe(200)
+    const popular2 = JSON.parse(getRes2.body)
+    expect(popular2.length).toBe(1)
+    expect(popular2[0].id).toBe(p2.id)
+
+    // Проверить в БД что пины обновлены
+    const dbP1After = await db.product.findUnique({ where: { id: p1.id }, select: { popularPin: true } })
+    const dbP2After = await db.product.findUnique({ where: { id: p2.id }, select: { popularPin: true } })
+    expect(dbP1After?.popularPin).toBeNull()
+    expect(dbP2After?.popularPin).toBe(1)
+
+    // Снять все пины
+    await app.inject({
+      method: 'PUT',
+      url: '/api/v1/admin/popular',
+      headers: auth,
+      payload: { productIds: [] },
+    })
+
+    // Проверить что все пины удалены
+    const dbP1Final = await db.product.findUnique({ where: { id: p1.id }, select: { popularPin: true } })
+    const dbP2Final = await db.product.findUnique({ where: { id: p2.id }, select: { popularPin: true } })
+    expect(dbP1Final?.popularPin).toBeNull()
+    expect(dbP2Final?.popularPin).toBeNull()
   })
 })

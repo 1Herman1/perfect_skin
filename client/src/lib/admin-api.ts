@@ -590,3 +590,34 @@ export interface SyncLogItem {
 export async function getSyncLog(): Promise<{ items: SyncLogItem[] }> {
   return fetchApi<{ items: SyncLogItem[] }>('/api/v1/admin/sync-log')
 }
+
+// ============ Популярные товары ============
+
+export interface PopularProduct {
+  id: string
+  name: string
+  slug: string
+  image: string | null
+  minPrice: number
+  popularPin: number
+}
+
+/**
+ * Получить список закреплённых популярных товаров
+ */
+export async function adminGetPopular(): Promise<PopularProduct[]> {
+  return fetchApi<PopularProduct[]>('/api/v1/admin/popular')
+}
+
+/**
+ * Установить порядок популярных товаров
+ */
+export async function adminSetPopular(productIds: string[]): Promise<{ success: boolean }> {
+  return fetchApi<{ success: boolean }>(
+    '/api/v1/admin/popular',
+    {
+      method: 'PUT',
+      body: JSON.stringify({ productIds }),
+    }
+  )
+}

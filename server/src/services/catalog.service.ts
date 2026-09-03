@@ -259,8 +259,20 @@ export async function getProducts(
         include: { brand: true, line: true, variants: true },
       })
 
-      // Sort in memory: units desc → isFeatured desc → createdAt desc → id asc
+      // Sort in memory: pinned by popularPin asc → unpinned by units desc → isFeatured desc → createdAt desc → id asc
       const sorted = products.sort((a, b) => {
+        const aPinned = a.popularPin !== null
+        const bPinned = b.popularPin !== null
+
+        // Pinned items first
+        if (aPinned && !bPinned) return -1
+        if (!aPinned && bPinned) return 1
+        if (aPinned && bPinned) {
+          // Both pinned: sort by popularPin ascending
+          return a.popularPin! - b.popularPin!
+        }
+
+        // Both unpinned: sort by sales units desc
         const unitsA = popularMap.get(a.id) || 0
         const unitsB = popularMap.get(b.id) || 0
         if (unitsA !== unitsB) return unitsB - unitsA

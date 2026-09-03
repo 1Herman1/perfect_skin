@@ -332,6 +332,7 @@ model Product {
   maxPrice           Int        @default(0) // максимальная розничная цена активных фасовок, копейки
   isActive           Boolean    @default(true)
   isFeatured         Boolean    @default(false)
+  popularPin         Int? // позиция в закреплённых популярных товарах (null = не закреплён)
   createdAt          DateTime   @default(now())
   updatedAt          DateTime   @updatedAt
   deletedAt          DateTime?
@@ -351,6 +352,7 @@ model Product {
   @@index([lineId])
   @@index([isActive, deletedAt, createdAt])
   @@index([minPrice])
+  @@index([popularPin])
   @@map("products")
 }
 

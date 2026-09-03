@@ -22,6 +22,10 @@ const updateProductSchema = z.object({
   isFeatured: z.boolean().optional(),
 })
 
+const setPopularSchema = z.object({
+  productIds: z.array(z.string().uuid()).max(20),
+})
+
 export async function productsRoutes(app: FastifyInstance, preHandlers: any[]) {
   // GET /api/v1/admin/variants
   app.get<{ Querystring: any; Reply: any }>(
@@ -182,6 +186,85 @@ export async function productsRoutes(app: FastifyInstance, preHandlers: any[]) {
 
       reply.code(200)
       return product
+    }
+  )
+
+  // GET /api/v1/admin/popular
+  app.get<{ Reply: any }>(
+    '/popular',
+    {
+      preHandler: preHandlers,
+      schema: {
+        response: {
+          200: {
+            type: 'array',
+            items: {
+              type: 'object',
+              additionalProperties: false,
+              required: ['id', 'name', 'slug', 'image', 'minPrice', 'popularPin'],
+              properties: {
+                id: { type: 'string', format: 'uuid' },
+                name: { type: 'string' },
+                slug: { type: 'string' },
+                image: { type: ['string', 'null'] },
+                minPrice: { type: 'integer' },
+                popularPin: { type: 'integer' },
+              },
+            },
+          },
+          401: { $ref: 'ps.error#' },
+          403: { $ref: 'ps.error#' },
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      const items = await adminProductService.getPopular()
+      reply.code(200)
+      return items
+    }
+  )
+
+  // PUT /api/v1/admin/popular
+  app.put<{ Body: any; Reply: any }>(
+    '/popular',
+    {
+      preHandler: preHandlers,
+      schema: {
+        body: {
+          type: 'object',
+          required: ['productIds'],
+          additionalProperties: false,
+          properties: {
+            productIds: {
+              type: 'array',
+              items: { type: 'string', format: 'uuid' },
+              maxItems: 20,
+            },
+          },
+        },
+        response: {
+          200: {
+            type: 'object',
+            required: ['success'],
+            properties: {
+              success: { type: 'boolean' },
+            },
+          },
+          400: { $ref: 'ps.error#' },
+          401: { $ref: 'ps.error#' },
+          403: { $ref: 'ps.error#' },
+        },
+      },
+    },
+    async (request: FastifyRequest<{ Body: any }>, reply: FastifyReply) => {
+      const result = setPopularSchema.safeParse(request.body)
+      if (!result.success) {
+        throw new ApiError(400, 'VALIDATION_ERROR', 'Ошибка валидации')
+      }
+
+      await adminProductService.setPopular(result.data.productIds)
+      reply.code(200)
+      return { success: true }
     }
   )
 }

@@ -177,6 +177,64 @@ export class AdminProductService {
       updatedAt: variant.updatedAt,
     }
   }
+
+  async getPopular() {
+    const products = await db.product.findMany({
+      where: { popularPin: { not: null }, deletedAt: null },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        images: true,
+        minPrice: true,
+        popularPin: true,
+      },
+      orderBy: { popularPin: 'asc' },
+    })
+
+    return products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      image: p.images[0] || null,
+      minPrice: p.minPrice,
+      popularPin: p.popularPin,
+    }))
+  }
+
+  async setPopular(productIds: string[]) {
+    // Validate max count
+    if (productIds.length > 20) {
+      throw new ApiError(400, 'TOO_MANY_PRODUCTS', 'Максимум 20 товаров')
+    }
+
+    // Verify all products exist
+    const existing = await db.product.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true },
+    })
+
+    if (existing.length !== productIds.length) {
+      throw new ApiError(400, 'PRODUCT_NOT_FOUND', 'Некоторые товары не найдены')
+    }
+
+    // Transaction: clear all pins, then set new ones
+    await db.$transaction(async (tx) => {
+      // Clear all existing pins
+      await tx.product.updateMany({
+        where: { popularPin: { not: null } },
+        data: { popularPin: null },
+      })
+
+      // Set new pins by order
+      for (let i = 0; i < productIds.length; i++) {
+        await tx.product.update({
+          where: { id: productIds[i] },
+          data: { popularPin: i + 1 },
+        })
+      }
+    })
+  }
 }
 
 export const adminProductService = new AdminProductService()

@@ -139,6 +139,20 @@ export function CheckoutPage() {
       return
     }
 
+    // Сервер принимает только +7XXXXXXXXXX, а подсказка поля показывает
+    // формат со скобками — приводим любой человеческий ввод к каноническому.
+    const digits = recipient.phone.replace(/\D/g, '')
+    const normalizedPhone =
+      digits.length === 11 && (digits.startsWith('7') || digits.startsWith('8'))
+        ? `+7${digits.slice(1)}`
+        : digits.length === 10
+          ? `+7${digits}`
+          : recipient.phone
+    if (!/^\+7\d{10}$/.test(normalizedPhone)) {
+      setSubmitError('Проверьте номер телефона — нужен российский номер из 10 цифр')
+      return
+    }
+
     setSubmitting(true)
     setSubmitError('')
 
@@ -147,7 +161,7 @@ export function CheckoutPage() {
         deliveryMethod: selectedMethod,
         recipient: {
           name: recipient.name,
-          phone: recipient.phone,
+          phone: normalizedPhone,
           ...(recipient.email && { email: recipient.email }),
         },
         expectedTotal: total,
