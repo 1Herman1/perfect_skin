@@ -6,8 +6,6 @@ import { DrawerProvider } from '@/context/DrawerContext'
 import { CartProvider } from '@/context/CartContext'
 import { AuthProvider } from '@/context/AuthContext'
 import { FavoritesProvider } from '@/context/FavoritesContext'
-import { RequireRole } from '@/components/admin/RequireRole'
-import { AdminLayout } from '@/components/admin/AdminLayout'
 
 // Shop pages
 const HomePage = lazy(() => import('@/components/pages/HomePage').then((m) => ({ default: m.HomePage })))
@@ -26,17 +24,8 @@ const BlogPage = lazy(() => import('@/components/pages/BlogPage').then((m) => ({
 const BlogPostPage = lazy(() => import('@/components/pages/BlogPostPage').then((m) => ({ default: m.BlogPostPage })))
 const NotFoundPage = lazy(() => import('@/components/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
 
-// Admin pages
-const AdminDashboardPage = lazy(() => import('@/components/admin/pages/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage })))
-const AdminOrdersPage = lazy(() => import('@/components/admin/pages/AdminOrdersPage').then((m) => ({ default: m.AdminOrdersPage })))
-const AdminOrderPage = lazy(() => import('@/components/admin/pages/AdminOrderPage').then((m) => ({ default: m.AdminOrderPage })))
-const AdminProductsPage = lazy(() => import('@/components/admin/pages/AdminProductsPage').then((m) => ({ default: m.AdminProductsPage })))
-const AdminPromoPage = lazy(() => import('@/components/admin/pages/AdminPromoPage').then((m) => ({ default: m.AdminPromoPage })))
-const AdminPostsPage = lazy(() => import('@/components/admin/pages/AdminPostsPage').then((m) => ({ default: m.AdminPostsPage })))
-const AdminPostEditPage = lazy(() => import('@/components/admin/pages/AdminPostEditPage').then((m) => ({ default: m.AdminPostEditPage })))
-const AdminSyncPage = lazy(() => import('@/components/admin/pages/AdminSyncPage').then((m) => ({ default: m.AdminSyncPage })))
-
-const adminRoles = ['super_admin', 'orders_manager', 'products_manager', 'content_manager']
+// Admin app (lazy-loaded chunk)
+const AdminApp = lazy(() => import('@/components/admin/AdminApp').then((m) => ({ default: m.AdminApp })))
 
 const ShopLayout = () => (
   <DrawerProvider>
@@ -55,24 +44,8 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          {/* Admin routes */}
-          <Route
-            path="/admin/*"
-            element={
-              <RequireRole roles={adminRoles}>
-                <AdminLayout />
-              </RequireRole>
-            }
-          >
-            <Route index element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminDashboardPage /></Suspense>} />
-            <Route path="orders" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminOrdersPage /></Suspense>} />
-            <Route path="orders/:id" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminOrderPage /></Suspense>} />
-            <Route path="products" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminProductsPage /></Suspense>} />
-            <Route path="promo" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminPromoPage /></Suspense>} />
-            <Route path="posts" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminPostsPage /></Suspense>} />
-            <Route path="posts/:id" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminPostEditPage /></Suspense>} />
-            <Route path="sync" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminSyncPage /></Suspense>} />
-          </Route>
+          {/* Admin routes (lazy-loaded) */}
+          <Route path="/admin/*" element={<Suspense fallback={<div className="container-app py-24 text-muted-foreground">Загрузка…</div>}><AdminApp /></Suspense>} />
 
           {/* Shop routes */}
           <Route element={<ShopLayout />}>

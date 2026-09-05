@@ -152,7 +152,7 @@ export function SearchModal({ open, onClose }: SearchModalProps) {
           </div>
 
           {/* Content */}
-          <div className="max-h-96 overflow-y-auto">
+          <div className="max-h-[456px] overflow-y-auto">
             {/* Empty State */}
             {showEmpty && (
               <div className="px-4 py-8 text-center">

@@ -58,10 +58,16 @@ export function CheckoutPage() {
   const [submitError, setSubmitError] = useState('')
   const [orderPlaced, setOrderPlaced] = useState<Order | null>(null)
 
-  // Загружаем методы доставки
+  // Загружаем методы доставки (только если корзина не пуста)
   useEffect(() => {
     let cancelled = false
     const loadMethods = async () => {
+      // Не запрашиваем методы доставки, если корзина пуста
+      if (!cart || cart.items.length === 0) {
+        setLoading(false)
+        return
+      }
+
       try {
         const result = await api.getDeliveryMethods(appliedPromo?.code)
         if (cancelled) return
@@ -84,7 +90,7 @@ export function CheckoutPage() {
     return () => {
       cancelled = true
     }
-  }, [appliedPromo?.code])
+  }, [appliedPromo?.code, cart?.items.length])
 
   const currentMethod = methods.find((m) => m.code === selectedMethod)
   const isDemoMode = import.meta.env.VITE_API_MODE === 'snapshot'
@@ -720,8 +726,12 @@ export function CheckoutPage() {
             </div>
 
             <div className="mb-4 text-xs text-muted-foreground space-y-2">
-              <p>Оплата: СБП или карта. Косметика надлежащего качества возврату не подлежит (ПП РФ №55).</p>
+              <p>Оплата: СБП или карта.</p>
               <p>Нажимая кнопку, вы соглашаетесь с <a href="/offer" target="_blank" rel="noopener" className="underline underline-offset-2">условиями оферты</a></p>
+            </div>
+
+            <div className="mb-4 p-3 bg-muted rounded-block text-xs text-muted-foreground border border-border">
+              <p>Косметика надлежащего качества обмену и возврату не подлежит (ПП РФ №55).</p>
             </div>
 
             <button

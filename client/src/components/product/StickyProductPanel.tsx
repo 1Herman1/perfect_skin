@@ -70,37 +70,18 @@ export function StickyProductPanel({
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-border p-4 shadow-lg z-40 animate-in slide-in-from-bottom-2">
-      <div className="container-app flex items-center gap-1">
-        {/* Image */}
-        {product.image && (
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-20 h-20 object-cover rounded"
-          />
-        )}
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-sans font-bold text-foreground truncate">
-            {product.name}
-          </h3>
-          {product.variants?.[0] && (
-            <p className="text-sm text-muted-foreground">
-              {product.variants[0].volumeLabel}
-            </p>
-          )}
-          <p className="font-semibold text-foreground mt-1">
-            {formatPrice(product.minPrice)}
-          </p>
-        </div>
+      <div className="container-app flex items-center justify-between gap-4">
+        {/* Price */}
+        <p className="font-semibold text-foreground whitespace-nowrap tabular-nums text-lg">
+          {formatPrice(product.minPrice)}
+        </p>
 
         {/* Button + Favorite */}
         <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={handleAddToCart}
             disabled={!product.inStock || addingState === 'loading'}
-            className="px-6 py-0.5 bg-primary text-primary-foreground font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity whitespace-nowrap min-h-10"
+            className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-full hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity whitespace-nowrap min-h-11"
           >
             {addingState === 'success'
               ? 'Добавлено ✓'
@@ -115,7 +96,7 @@ export function StickyProductPanel({
             onClick={() => toggle(product.slug)}
             aria-pressed={isFav}
             aria-label={isFav ? 'Убрать из избранного' : 'Добавить в избранное'}
-            className="w-10 h-10 flex items-center justify-center hover:bg-muted rounded-full transition-colors duration-200 flex-shrink-0"
+            className="w-11 h-11 flex items-center justify-center hover:bg-muted rounded-full transition-colors duration-200 flex-shrink-0"
           >
             {isFav ? (
               <IconHeartSolid className="w-5 h-5 text-primary" />

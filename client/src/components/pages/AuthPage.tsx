@@ -60,7 +60,7 @@ export function AuthPage() {
     }
 
     if (!isEmailValid) {
-      setError('Проверьте адрес — похоже, есть опечатка')
+      setError('Введите корректный email')
       return
     }
 
@@ -86,7 +86,7 @@ export function AuthPage() {
   }
 
   const handleVerifyCode = async () => {
-    if (code.length < CODE_LENGTH) {
+    if (!code || code.length < CODE_LENGTH) {
       setError('Введите 6-значный код')
       return
     }
@@ -143,17 +143,6 @@ export function AuthPage() {
   return (
     <div className="min-h-[100dvh] bg-background flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-sm">
-        {/* Логотип */}
-        <div className="flex justify-center mb-10">
-          <img
-            src="/logo/logo-wordmark.webp"
-            alt="Perfect Skin"
-            width={120}
-            height={20}
-            className="h-6 w-auto"
-          />
-        </div>
-
         {/* Карточка входа */}
         <div className="bg-card rounded-block shadow-sm p-8 border border-border">
           {isDemoMode ? (
@@ -186,9 +175,6 @@ export function AuthPage() {
                   <h1 className="text-lg font-heading font-semibold text-foreground mb-1">
                     Введите email
                   </h1>
-                  <p className="text-body-sm text-muted-foreground mb-6">
-                    Пришлём код для входа
-                  </p>
 
                   <div className="mb-4">
                     <label
@@ -239,7 +225,7 @@ export function AuthPage() {
 
                   <button
                     onClick={handleSendCode}
-                    disabled={loading || !email.trim() || !isEmailValid}
+                    disabled={loading}
                     className="w-full px-6 py-3 bg-primary text-primary-foreground font-bold rounded-pill disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors min-h-11 flex items-center justify-center"
                   >
                     {loading ? (
@@ -342,7 +328,7 @@ export function AuthPage() {
 
                   <button
                     onClick={handleVerifyCode}
-                    disabled={loading || code.length < CODE_LENGTH}
+                    disabled={loading}
                     className="w-full px-6 py-3 bg-primary text-primary-foreground font-bold rounded-pill disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary/90 transition-colors min-h-11 flex items-center justify-center mb-4"
                   >
                     {loading ? (

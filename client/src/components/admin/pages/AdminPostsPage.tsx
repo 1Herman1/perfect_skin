@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { fetchAdminPosts } from '@/lib/admin-api'
 
 interface Post {
@@ -85,16 +85,17 @@ export function AdminPostsPage() {
               {posts.map((post, idx) => (
                 <tr
                   key={post.id}
-                  className={`border-b border-border hover:bg-muted/30 cursor-pointer transition-colors ${
+                  className={`border-b border-border hover:bg-muted/30 transition-colors ${
                     idx % 2 === 1 ? 'bg-muted/10' : ''
                   }`}
-                  onClick={() => navigate(`/admin/posts/${post.id}`)}
                 >
                   <td className="px-6 py-4">
-                    <div>
-                      <p className="text-body font-medium text-foreground">{post.title}</p>
-                      <p className="text-body-sm text-muted-foreground">{post.slug}</p>
-                    </div>
+                    <Link to={`/admin/posts/${post.id}`} className="hover:text-primary transition-colors">
+                      <div>
+                        <p className="text-body font-medium text-foreground">{post.title}</p>
+                        <p className="text-body-sm text-muted-foreground">{post.slug}</p>
+                      </div>
+                    </Link>
                   </td>
                   <td className="px-6 py-4">
                     <span className={`inline-block px-3 py-1 rounded-full text-label font-semibold ${

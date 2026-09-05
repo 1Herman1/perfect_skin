@@ -65,7 +65,7 @@ export function BlogPage() {
         </div>
       ) : (
         <div className="container-app pb-12 md:pb-20">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="space-y-6">
             {posts.map((post) => {
               const publishDate = post.publishedAt
                 ? new Date(post.publishedAt)
@@ -80,15 +80,15 @@ export function BlogPage() {
                 <Link
                   key={post.id}
                   to={`/blog/${post.slug}`}
-                  className="group bg-card border border-border rounded-block p-6 hover:border-primary transition-colors"
+                  className="group bg-card border border-border rounded-block p-6 hover:border-primary transition-colors block"
                 >
                   <div className="space-y-4">
-                    <h2 className="text-h4 font-heading font-bold text-foreground group-hover:text-primary transition-colors line-clamp-2">
+                    <h2 className="text-xl font-heading font-semibold text-foreground group-hover:text-primary transition-colors line-clamp-2">
                       {post.title}
                     </h2>
 
                     {post.excerpt && (
-                      <p className="text-body-sm text-muted-foreground line-clamp-2">
+                      <p className="text-body text-muted-foreground line-clamp-3">
                         {post.excerpt}
                       </p>
                     )}

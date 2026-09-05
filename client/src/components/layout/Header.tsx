@@ -27,7 +27,7 @@ export function Header({
   onMobileMenuOpen,
   onSearchOpen,
 }: HeaderProps) {
-  const isDesktop = useMediaQuery('(min-width: 768px)')
+  const isDesktop = useMediaQuery('(min-width: 1024px)')
   const location = useLocation()
   const { openCart, openFavorites } = useDrawer()
   const { count } = useCart()
@@ -78,7 +78,7 @@ export function Header({
           )}
 
           {/* Right Actions */}
-          <div className="flex items-center gap-1 ml-auto">
+          <div className="flex items-center gap-4 ml-auto">
             {/* Phone */}
             {isDesktop && (
               <a
@@ -138,7 +138,7 @@ export function Header({
                 {isAuthed && user?.role !== 'customer' && (
                   <Link
                     to="/admin"
-                    className="hidden md:flex w-12 h-12 items-center justify-center hover:bg-muted rounded-pill transition-colors duration-200 focus-visible:outline-ring"
+                    className="hidden lg:flex w-12 h-12 items-center justify-center hover:bg-muted rounded-pill transition-colors duration-200 focus-visible:outline-ring"
                     aria-label="Админка"
                     title="Админка"
                   >

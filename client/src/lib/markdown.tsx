@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatPrice } from '@/lib/format'
 
 export interface ProductCard {
   id: string
@@ -10,16 +11,26 @@ export interface ProductCard {
 }
 
 function ProductEmbed({ product }: { product: ProductCard }) {
-  const priceRub = (product.minPrice / 100).toFixed(0)
   return (
     <div className="my-8 p-6 border border-border rounded-block bg-card">
-      <div className="flex gap-6">
+      <div className="flex flex-col sm:flex-row gap-6">
+        {/* Product image: full width on mobile, fixed width on larger screens */}
         {product.image && (
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-32 h-40 object-cover rounded-block flex-shrink-0"
-          />
+          <picture className="w-full sm:w-32 flex-shrink-0">
+            <source
+              srcSet={`/products-optimized/${product.slug}/card.webp 1x, /products-optimized/${product.slug}/card@2x.webp 2x`}
+              type="image/webp"
+            />
+            <img
+              src={product.image}
+              alt={product.name}
+              onError={(e) => {
+                // Fallback to product.image if optimized version fails
+                e.currentTarget.src = product.image!
+              }}
+              className="w-full sm:w-32 h-40 sm:h-40 object-cover rounded-block"
+            />
+          </picture>
         )}
         <div className="flex-1">
           {product.brand && (
@@ -31,7 +42,7 @@ function ProductEmbed({ product }: { product: ProductCard }) {
             {product.name}
           </h3>
           <p className="text-h4 font-heading font-bold text-primary mb-4">
-            {priceRub} ₽
+            {formatPrice(product.minPrice)}
           </p>
           <a
             href={`/product/${product.slug}`}
@@ -212,17 +223,32 @@ function renderInlineMarkdown(text: string): React.ReactNode {
       )
     } else if (match.type === 'link' && Array.isArray(match.content)) {
       const [linkText, href] = match.content
-      parts.push(
-        <a
-          key={`link-${match.start}`}
-          href={href}
-          className="text-primary hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {linkText}
-        </a>
-      )
+
+      // Validate href: only allow http(s), mailto, and relative URLs
+      const isValidHref =
+        href.startsWith('http://') ||
+        href.startsWith('https://') ||
+        href.startsWith('mailto:') ||
+        href.startsWith('/') ||
+        href.startsWith('#') ||
+        !href.includes(':') // relative URL like "page" or "page/section"
+
+      if (isValidHref) {
+        parts.push(
+          <a
+            key={`link-${match.start}`}
+            href={href}
+            className="text-primary hover:underline"
+            target={href.startsWith('http') ? '_blank' : undefined}
+            rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+          >
+            {linkText}
+          </a>
+        )
+      } else {
+        // Invalid URL scheme (e.g., javascript:) — render as plain text
+        parts.push(linkText)
+      }
     }
 
     lastIndex = match.end

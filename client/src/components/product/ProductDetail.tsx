@@ -130,7 +130,7 @@ export function ProductDetail({ product, loading, error }: ProductDetailProps) {
             )}
 
             {/* Title */}
-            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4 break-words">
+            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-4 hyphens-auto break-words min-w-0">
               {product.name}
             </h1>
 
@@ -192,13 +192,29 @@ export function ProductDetail({ product, loading, error }: ProductDetailProps) {
           </div>
 
           {/* Stock Status */}
-          <p className="text-sm text-muted-foreground">
-            {product.inStock ? (
-              <span className="text-success">В наличии</span>
-            ) : (
-              <span className="text-destructive">Нет в наличии</span>
-            )}
-          </p>
+          {product.inStock && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-2 px-3 py-2 bg-success/10 text-success rounded-full text-sm font-semibold">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                  </svg>
+                  В наличии
+                </span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Доставка СДЭК 2–4 дня
+              </p>
+              {product.variants?.[0]?.stock !== undefined && product.variants[0].stock <= 3 && (
+                <p className="text-sm text-urgency font-semibold">
+                  Осталось {product.variants[0].stock} {product.variants[0].stock === 1 ? 'шт.' : product.variants[0].stock % 10 === 1 && product.variants[0].stock % 100 !== 11 ? 'шт.' : 'шт.'}
+                </p>
+              )}
+            </div>
+          )}
+          {!product.inStock && (
+            <p className="text-sm text-destructive font-semibold">Нет в наличии</p>
+          )}
         </div>
       </div>
 

@@ -379,19 +379,22 @@ export function AdminPostEditPage() {
               </div>
             </div>
 
-            {form.body && (
-              <div className="bg-card border border-border rounded-block p-6">
-                <h3 className="text-label font-semibold mb-4 text-foreground uppercase">
-                  Рендер
-                </h3>
-                <div className="text-body-sm space-y-2 max-h-96 overflow-y-auto">
-                  {renderMarkdown(form.body, { products: [] }).slice(0, 5)}
-                  {renderMarkdown(form.body, { products: [] }).length > 5 && (
-                    <p className="text-muted-foreground">…</p>
-                  )}
+            {form.body && (() => {
+              const rendered = renderMarkdown(form.body, { products: [] })
+              return (
+                <div className="bg-card border border-border rounded-block p-6">
+                  <h3 className="text-label font-semibold mb-4 text-foreground uppercase">
+                    Рендер
+                  </h3>
+                  <div className="text-body-sm space-y-2 max-h-96 overflow-y-auto">
+                    {rendered.slice(0, 5)}
+                    {rendered.length > 5 && (
+                      <p className="text-muted-foreground">…</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )
+            })()}
           </div>
         </div>
       </div>

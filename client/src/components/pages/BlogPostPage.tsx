@@ -122,6 +122,19 @@ export function BlogPostPage() {
           </div>
         </div>
 
+        {/* Call-to-action: Browse catalog */}
+        <div className="max-w-prose bg-card border border-border rounded-block p-6 mb-16">
+          <p className="text-body text-foreground mb-4">
+            Найти нужную косметику можно в каталоге.
+          </p>
+          <a
+            href="/catalog/all"
+            className="inline-block px-6 py-3 border border-primary text-primary font-bold rounded-pill hover:bg-primary/5 transition-colors min-h-11"
+          >
+            Смотреть в каталоге
+          </a>
+        </div>
+
         {/* Footer divider */}
         <div className="border-t border-border pt-12 mt-16">
           <button

@@ -237,65 +237,63 @@ export async function getProducts(
   } else if (filters.sort === 'newest') {
     orderBy = [{ createdAt: 'desc' }, { id: 'asc' }]
   } else if (filters.sort === 'popular') {
-    // Handle popular sorting in-memory with caching
-    // For now, degrade to newest if too many products
-    const count = await prisma.product.count({ where })
-    if (count > 1000) {
-      // Degrade to newest
-      orderBy = [{ createdAt: 'desc' }, { id: 'asc' }]
-    } else {
-      // Get all product IDs matching filter
-      const productIds = await prisma.product.findMany({
-        where,
-        select: { id: true },
-      })
+    // Optimize popular sorting: lightweight query → in-memory sort → fetch page
+    // Get all matching product IDs with popularPin for sorting
+    const productRecords = await prisma.product.findMany({
+      where,
+      select: { id: true, popularPin: true },
+    })
 
-      // Get cached popular products map (10-minute TTL)
-      const popularMap = await getPopularProductsMap(prisma)
+    // Get cached popular products map (10-minute TTL)
+    const popularMap = await getPopularProductsMap(prisma)
 
-      // Get full products for sorting
-      const products = await prisma.product.findMany({
-        where: { id: { in: productIds.map((p) => p.id) } },
-        include: { brand: true, line: true, variants: true },
-      })
+    // Sort in memory: pinned by popularPin asc → unpinned by units desc → id asc
+    const sorted = productRecords.sort((a, b) => {
+      const aPinned = a.popularPin !== null
+      const bPinned = b.popularPin !== null
 
-      // Sort in memory: pinned by popularPin asc → unpinned by units desc → isFeatured desc → createdAt desc → id asc
-      const sorted = products.sort((a, b) => {
-        const aPinned = a.popularPin !== null
-        const bPinned = b.popularPin !== null
-
-        // Pinned items first
-        if (aPinned && !bPinned) return -1
-        if (!aPinned && bPinned) return 1
-        if (aPinned && bPinned) {
-          // Both pinned: sort by popularPin ascending
-          return a.popularPin! - b.popularPin!
-        }
-
-        // Both unpinned: sort by sales units desc
-        const unitsA = popularMap.get(a.id) || 0
-        const unitsB = popularMap.get(b.id) || 0
-        if (unitsA !== unitsB) return unitsB - unitsA
-        if (a.isFeatured !== b.isFeatured) return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0)
-        if (a.createdAt !== b.createdAt) return b.createdAt.getTime() - a.createdAt.getTime()
-        return a.id.localeCompare(b.id)
-      })
-
-      // Apply limit/offset and build result
-      const total = sorted.length
-      const pageIds = sorted
-        .slice(filters.offset, filters.offset + filters.limit)
-        .map((p) => p.id)
-
-      const pageProducts = products.filter((p) => pageIds.includes(p.id))
-      const orderedByPage = pageIds.map((id) => pageProducts.find((p) => p.id === id)!)
-
-      return {
-        items: orderedByPage.map(buildProductCard),
-        total,
-        limit: filters.limit,
-        offset: filters.offset,
+      // Pinned items first
+      if (aPinned && !bPinned) return -1
+      if (!aPinned && bPinned) return 1
+      if (aPinned && bPinned) {
+        // Both pinned: sort by popularPin ascending
+        return a.popularPin! - b.popularPin!
       }
+
+      // Both unpinned: sort by sales units desc
+      const unitsA = popularMap.get(a.id) || 0
+      const unitsB = popularMap.get(b.id) || 0
+      if (unitsA !== unitsB) return unitsB - unitsA
+      return a.id.localeCompare(b.id)
+    })
+
+    // Apply limit/offset to get page IDs
+    const total = sorted.length
+    const pageIds = sorted
+      .slice(filters.offset, filters.offset + filters.limit)
+      .map((p) => p.id)
+
+    // Fetch full product data for page items
+    const pageProducts = await prisma.product.findMany({
+      where: { id: { in: pageIds } },
+      include: {
+        brand: true,
+        line: true,
+        variants: {
+          where: ACTIVE,
+          orderBy: { volumeValue: 'asc' },
+        },
+      },
+    })
+
+    // Restore original page order (as sorted above)
+    const orderedByPage = pageIds.map((id) => pageProducts.find((p) => p.id === id)!)
+
+    return {
+      items: orderedByPage.map(buildProductCard),
+      total,
+      limit: filters.limit,
+      offset: filters.offset,
     }
   }
 

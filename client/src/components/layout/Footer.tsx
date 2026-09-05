@@ -25,8 +25,11 @@ export function Footer() {
           {/* Column 1: About */}
           <div>
             <details key={isDesktop ? "da" : "ma"} className="group" open={isDesktop}>
-              <summary className="cursor-pointer md:cursor-auto text-lg font-heading font-bold mb-6 list-none">
+              <summary className="cursor-pointer md:cursor-auto text-lg font-heading font-bold mb-6 list-none flex items-center justify-between gap-2 md:mb-6">
                 О компании
+                <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-open:rotate-180 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
               </summary>
               <div>
                 <ul className="space-y-2 mb-6">
@@ -76,8 +79,11 @@ export function Footer() {
           {/* Column 2: Catalog */}
           <div>
             <details key={isDesktop ? "db" : "mb"} className="group" open={isDesktop}>
-              <summary className="cursor-pointer md:cursor-auto text-lg font-heading font-bold mb-6 list-none">
+              <summary className="cursor-pointer md:cursor-auto text-lg font-heading font-bold mb-6 list-none flex items-center justify-between gap-2 md:mb-6">
                 Каталог
+                <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-open:rotate-180 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
               </summary>
               <ul className="space-y-2">
                 {catalogLinks.map((link) => (
@@ -97,8 +103,11 @@ export function Footer() {
           {/* Column 3: Contacts */}
           <div>
             <details key={isDesktop ? "d2" : "m2"} className="group" open>
-              <summary className="cursor-pointer md:cursor-auto text-lg font-heading font-bold mb-6 list-none">
+              <summary className="cursor-pointer md:cursor-auto text-lg font-heading font-bold mb-6 list-none flex items-center justify-between gap-2 md:mb-6">
                 Контакты
+                <svg className="w-5 h-5 flex-shrink-0 transition-transform duration-200 group-open:rotate-180 md:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
               </summary>
               <div>
                 <ul className="space-y-2 mb-6">

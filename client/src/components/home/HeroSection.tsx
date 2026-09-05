@@ -63,7 +63,17 @@ export function HeroSection() {
           {/* RIGHT: Accent background with product card */}
           <div className="relative min-h-[500px] flex items-start justify-end">
             {/* Accent bg block (golden) */}
-            <img src="/photos/m4.png" className="absolute inset-0 w-full h-full object-cover rounded-block hidden md:block" alt="Косметика ISSEIMI в воде" />
+            <picture className="absolute inset-0 hidden md:block">
+              <source srcSet="/photos/m4.webp" type="image/webp" />
+              <img
+                src="/photos/m4.png"
+                className="w-full h-full object-cover rounded-block"
+                alt="Косметика ISSEIMI в воде"
+                width={1122}
+                height={1402}
+                fetchPriority="high"
+              />
+            </picture>
 
             {/* Product card (beige) */}
             <Link to="/product/bee-venom-cream-antivozrastnoj-krem" className="relative z-10 bg-background rounded-block p-6 md:p-10 max-w-[320px] ml-auto mt-32 md:mt-48 md:-ml-10 block hover:no-underline">

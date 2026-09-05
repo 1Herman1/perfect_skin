@@ -9,8 +9,8 @@ export function CtaTiles() {
       <div className="container-app">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-20 md:mb-32">
           {/* Tile 1: Quiz */}
-          <div className="bg-accent text-foreground rounded-block p-10 md:p-16 transition-transform duration-200 hover:-translate-y-1">
-            <h2 className="text-h2 font-heading font-bold mb-4 md:mb-6">
+          <div className="bg-accent text-foreground rounded-block p-10 lg:p-16 transition-transform duration-200 hover:-translate-y-1">
+            <h2 className="text-h2 font-heading font-bold mb-4 md:mb-6 break-words hyphens-auto">
               Подобрать косметику
             </h2>
             <p className="text-body leading-body text-foreground mb-2 md:mb-10 opacity-90">
@@ -23,8 +23,8 @@ export function CtaTiles() {
           </div>
 
           {/* Tile 2: Consultation */}
-          <Link to="/contacts" className="border border-primary rounded-block p-10 md:p-16 bg-transparent transition-transform duration-200 hover:-translate-y-1 block no-underline hover:no-underline">
-            <h2 className="text-h2 font-heading font-bold mb-4 md:mb-6 text-primary">
+          <Link to="/contacts" className="border border-primary rounded-block p-10 lg:p-16 bg-transparent transition-transform duration-200 hover:-translate-y-1 block no-underline hover:no-underline">
+            <h2 className="text-h2 font-heading font-bold mb-4 md:mb-6 text-primary break-words hyphens-auto">
               Консультация косметолога
             </h2>
             <p className="text-body leading-body text-muted-foreground mb-2 md:mb-10">

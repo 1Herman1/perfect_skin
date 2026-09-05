@@ -12,9 +12,11 @@ interface ProductCardProps {
   onAddToCart?: (productId: string) => void
   // Первые карточки над фолдом — часть LCP, им eager + high priority.
   eager?: boolean
+  // Aspect ratio для фото (по умолчанию 3/4, для related используем 4/5)
+  aspectRatio?: '3/4' | '4/5'
 }
 
-export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
+export function ProductCard({ product, onAddToCart, eager, aspectRatio = '3/4' }: ProductCardProps) {
   const { addItem } = useCart()
   const { openCart } = useDrawer()
   const { isFavorite, toggle } = useFavorites()
@@ -68,7 +70,9 @@ export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
                 loading={eager ? 'eager' : 'lazy'}
                 fetchPriority={eager ? 'high' : undefined}
                 decoding="async"
-                className="w-full aspect-[3/4] object-contain rounded-media"
+                className={`w-full object-contain rounded-media ${
+                  aspectRatio === '4/5' ? 'aspect-[4/5]' : 'aspect-[3/4]'
+                }`}
               />
             </picture>
           ) : (
@@ -107,7 +111,7 @@ export function ProductCard({ product, onAddToCart, eager }: ProductCardProps) {
         {/* Name */}
         <Link
           to={`/product/${product.slug}`}
-          className="block text-body font-sans font-bold text-foreground mb-3 hover:text-primary transition-colors line-clamp-2 min-h-[3rem]"
+          className="block text-body font-sans font-bold text-foreground mb-3 hover:text-primary transition-colors line-clamp-2 min-h-[3rem] min-w-0 break-words hyphens-auto"
         >
           {product.name}
         </Link>
