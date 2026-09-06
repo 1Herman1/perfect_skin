@@ -5,44 +5,42 @@ const categories = [
   {
     num: '01',
     title: 'Уход за лицом',
-    shortLabel: 'Лицо',
-    desc: 'Кремы, сыворотки и маски ISSEIMI для домашнего и кабинетного ухода.',
+    eyebrow: 'Кремы, сыворотки и маски ISSEIMI',
     slug: 'kremy-dlya-litsa-i-shei',
+    photo: '/products-optimized/dinamizante-vosstanavlivayushhij-krem/card.webp',
     bgColor: 'bg-accent',
-    textColor: 'text-foreground',
   },
   {
     num: '02',
     title: 'Сыворотки',
-    shortLabel: 'Сыворотки',
-    desc: 'Активные концентраты для интенсивного ухода.',
+    eyebrow: 'Активные концентраты для интенсивного ухода',
     slug: 'syvorotki',
+    photo: '/products-optimized/collagen-booster-vosstanavlivayushhaya-syvorotka/card.webp',
     bgColor: 'bg-accent/60',
-    textColor: 'text-foreground',
   },
   {
     num: '03',
     title: 'Маски',
-    shortLabel: 'Маски',
-    desc: 'Питающие и очищающие маски для лица.',
+    eyebrow: 'Питающие и очищающие маски для лица',
     slug: 'maski',
+    photo: '/products-optimized/tts-energizing-mask-maska-so-stvolovymi-kletkami/card.webp',
     bgColor: 'bg-accent/30',
-    textColor: 'text-foreground',
   },
   {
     num: '04',
     title: 'Наборы',
-    shortLabel: 'Наборы',
-    desc: 'Готовые программы ухода и подарочные боксы.',
+    eyebrow: 'Готовые программы ухода и подарочные боксы',
     slug: 'nabory',
+    photo:
+      '/products-optimized/podarochnyj-nabor-bee-venom-s-pchelinym-yadom-dlya-razglazhivaniya-morshhin-i-ustraneniya-tusklosti-kozhi/card.webp',
     bgColor: 'bg-muted',
-    textColor: 'text-foreground',
   },
 ]
 
 export function CategoryAccordion() {
-  // Гармошка: наведённая (или сфокусированная) категория раскрывается шире.
-  // Тексты видимы всегда — прятать контент за hover нельзя (урок волны 1).
+  // Гармошка в формате «раскрытая витрина»: активная карточка широкая —
+  // надзаголовок, крупное имя, кнопка-стрелка и фото товара; свёрнутые —
+  // узкие корешки с вертикальной подписью. На мобиле — простой столбец.
   const [activeIdx, setActiveIdx] = useState(0)
 
   return (
@@ -52,49 +50,61 @@ export function CategoryAccordion() {
           Категории
         </h2>
 
-        <div className="flex flex-col md:flex-row gap-3 md:gap-2">
-          {categories.map((cat, idx) => (
-            <Link
-              key={cat.slug}
-              to={`/catalog/${cat.slug}`}
-              onMouseEnter={() => setActiveIdx(idx)}
-              onFocus={() => setActiveIdx(idx)}
-              className={`
-                relative min-w-0 overflow-hidden rounded-block group
-                transition-[flex-grow] duration-300 ease-out
-                ${cat.bgColor} ${cat.textColor}
-                focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
-                md:min-h-80 min-h-40
-              `}
-              style={{ flexGrow: activeIdx === idx ? 2 : 1, flexBasis: 0 }}
-            >
-              {/* Крупный номер-фон */}
-              <div className="hidden md:block absolute right-3 bottom-1 text-9xl font-heading font-bold opacity-10 pointer-events-none leading-none select-none">
-                {cat.num}
-              </div>
-
-              <div className="p-4 md:p-6 flex flex-col h-full">
-                <div className="text-label font-bold opacity-70 mb-2 whitespace-nowrap">
-                  {cat.num} · {cat.shortLabel}
+        <div className="flex flex-col md:flex-row gap-3 md:gap-3 md:h-[420px]">
+          {categories.map((cat, idx) => {
+            const active = activeIdx === idx
+            return (
+              <Link
+                key={cat.slug}
+                to={`/catalog/${cat.slug}`}
+                onMouseEnter={() => setActiveIdx(idx)}
+                onFocus={() => setActiveIdx(idx)}
+                className={`
+                  relative min-w-0 overflow-hidden rounded-block group
+                  transition-[flex-grow] duration-300 ease-out
+                  ${cat.bgColor} text-foreground
+                  focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary
+                  min-h-44 md:min-h-0
+                `}
+                style={{ flexGrow: active ? 5 : 1, flexBasis: 0 }}
+              >
+                {/* Свёрнутый корешок: вертикальная подпись (только десктоп) */}
+                <div
+                  className={`hidden md:flex absolute inset-0 items-center justify-center transition-opacity duration-200 ${
+                    active ? 'opacity-0' : 'opacity-100'
+                  }`}
+                >
+                  <span className="spine-vertical">{cat.title}</span>
                 </div>
-                <h3
-                  className={`font-heading font-bold mb-3 hyphens-auto transition-[font-size] duration-300 text-h3 ${
-                    activeIdx === idx ? 'md:text-h3' : 'md:text-xl'
+
+                {/* Раскрытое содержимое */}
+                <div
+                  className={`p-5 md:p-8 flex flex-col h-full transition-opacity duration-300 ${
+                    active ? 'md:opacity-100' : 'md:opacity-0'
                   }`}
                 >
-                  {cat.title}
-                </h3>
-                <p
-                  className={`text-body leading-body opacity-90 flex-1 transition-opacity duration-300 ${
-                    activeIdx === idx ? 'md:opacity-90' : 'md:opacity-0'
-                  }`}
-                >
-                  {cat.desc}
-                </p>
-                <div className="mt-4 text-body font-bold opacity-60">→</div>
-              </div>
-            </Link>
-          ))}
+                  <div className="text-label font-semibold opacity-70 mb-2 md:whitespace-nowrap">
+                    {cat.eyebrow}
+                  </div>
+                  <h3 className="text-h3 md:text-h2 font-heading font-bold mb-4">
+                    {cat.title}
+                  </h3>
+                  <span
+                    className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl transition-transform duration-200 group-hover:translate-x-1"
+                    aria-hidden="true"
+                  >
+                    →
+                  </span>
+                  <img
+                    src={cat.photo}
+                    alt=""
+                    loading="lazy"
+                    className="absolute right-2 bottom-0 w-40 md:w-64 max-w-[55%] object-contain pointer-events-none select-none mix-blend-multiply"
+                  />
+                </div>
+              </Link>
+            )
+          })}
         </div>
       </div>
     </section>
