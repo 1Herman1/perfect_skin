@@ -1,6 +1,6 @@
 export function About() {
   return (
-    <section id="about" className="bg-background py-20 md:py-32">
+    <section id="about" className="bg-background py-10 md:py-14">
       <div className="container-app">
         <div className="max-w-prose mb-16 md:mb-24">
           <h2 className="text-h2 font-heading font-bold mb-6">О компании</h2>

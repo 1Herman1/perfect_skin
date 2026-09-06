@@ -13,7 +13,7 @@ export function BestsellerSection() {
 
   if (loading) {
     return (
-      <section className="bg-background py-12 md:py-20">
+      <section className="bg-background py-10 md:py-14">
         <div className="container-app">
           <h2 className="text-h2 font-heading font-bold mb-8">Бестселлеры</h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
@@ -41,7 +41,7 @@ export function BestsellerSection() {
   }
 
   return (
-    <section className="bg-background py-12 md:py-20">
+    <section className="bg-background py-10 md:py-14">
       <div className="container-app">
         <h2 className="text-h2 font-heading font-bold mb-8">Бестселлеры</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">

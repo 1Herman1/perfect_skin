@@ -1,6 +1,6 @@
 export function BrandsSection() {
   return (
-    <section className="bg-background py-20 md:py-32">
+    <section className="bg-background py-10 md:py-14">
       <div className="container-app">
         <div className="mb-12 md:mb-16">
           <h2 className="text-h2 font-heading font-bold mb-4">

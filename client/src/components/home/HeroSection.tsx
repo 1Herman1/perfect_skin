@@ -5,7 +5,7 @@ export function HeroSection() {
   const { openQuiz } = useDrawer()
 
   return (
-    <section className="bg-background pt-12 md:pt-24 pb-20 md:pb-32">
+    <section className="bg-background pt-8 md:pt-12 pb-10 md:pb-14">
       <div className="container-app">
         {/* Grid: left (text) + right (card with accent bg) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-20 items-start">

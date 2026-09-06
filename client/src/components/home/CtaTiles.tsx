@@ -7,7 +7,7 @@ export function CtaTiles() {
   return (
     <section className="bg-background">
       <div className="container-app">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-20 md:mb-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-10 md:mb-14">
           {/* Tile 1: Quiz */}
           <div className="bg-accent text-foreground rounded-block p-10 lg:p-16 transition-transform duration-200 hover:-translate-y-1">
             <h2 className="text-h2 font-heading font-bold mb-4 md:mb-6 break-words hyphens-auto">
